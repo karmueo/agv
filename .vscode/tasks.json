@@ -1,0 +1,271 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // 构建所有包
+        {
+            "label": "build", // 任务标签，用于在 VS Code 中识别任务
+            "detail": "Build workspace (default)", // 任务的详细描述
+            "type": "shell", // 任务类型，这里是 shell 类型，即运行 shell 命令
+            "command": "./build.sh", // 执行的命令
+            "group": { // 任务分组，有助于在 VS Code 中对任务进行分类
+                "kind": "build", // 表示这是一个构建任务
+                "isDefault": true // 设置为默认构建任务
+            },
+            "problemMatcher": "$gcc" // 使用 gcc 问题匹配器，用于从输出中捕获问题
+        },
+        // 构建指定的包
+        {
+            "label": "packages-select-build", // 任务标签，用于在 VS Code 中识别任务
+            "detail": "构建指定的包", // 任务的详细描述
+            "type": "shell", // 任务类型，这里是 shell 类型，即运行 shell 命令
+            "command": "./packages-select-build.sh", // 执行的命令
+            "args": [
+                "${input:package}" // 用户输入包名
+            ],
+            "group": { // 任务分组，有助于在 VS Code 中对任务进行分类
+                "kind": "build", // 表示这是一个构建任务
+                "isDefault": false // 设置为默认构建任务
+            },
+            "problemMatcher": "$gcc" // 使用 gcc 问题匹配器，用于从输出中捕获问题
+        },
+        {
+            "label": "debug", // 调试任务
+            "detail": "Build workspace (debug)", // 详细描述
+            "type": "shell", // shell 类型
+            "command": "./build.sh", // 执行的命令
+            "args": [
+                "defaultParam1" // 默认参数
+            ],
+            "options": { // 任务选项
+                "env": { // 环境变量
+                    "BUILD_TYPE": "Debug" // 设置 BUILD_TYPE 环境变量为 Debug
+                }
+            },
+            "group": "build", // 分组为构建
+            "problemMatcher": "$gcc" // 问题匹配器
+        },
+        // 单元测试
+        {
+            "label": "test", // 测试任务
+            "detail": "运行所有单元测试并显示结果", // 详细描述
+            "type": "shell", // shell 类型
+            "command": "./test.sh", // 执行的命令
+            "group": { // 分组
+                "kind": "test", // 测试任务
+                "isDefault": true // 默认测试任务
+            }
+        },
+        // Clean
+        {
+            "label": "clean", // 清理任务
+            "detail": "Run the clean target", // 详细描述
+            "type": "shell", // shell 类型
+            "command": "colcon build --cmake-target clean", // 执行的命令
+            "problemMatcher": "$gcc" // 问题匹配器
+        },
+        {
+            "label": "purge", // 清理任务
+            "detail": "Purge workspace by deleting all generated files.", // 详细描述
+            "type": "shell",
+            "command": "sudo rm -fr build install log; sudo py3clean .",
+            "problemMatcher": []
+        },
+        {
+            "label": "source", // "label" 字段定义了任务的名称，这是在 VSCode 中引用任务时使用的标识符
+            "detail": "Source workspace",
+            "type": "shell",
+            "command": "source ${workspaceFolder}/install/setup.bash",
+            "problemMatcher": [] // "problemMatcher" 字段用于关联和解析任务输出中的问题
+        },
+        // Linting and static code analysis tasks
+        {
+            "label": "fix",
+            "detail": "Reformat files with uncrustify.",
+            "type": "shell",
+            "command": "ament_uncrustify --reformat src/",
+            "problemMatcher": []
+        },
+        {
+            "label": "uncrustify",
+            "detail": "使用 uncrustify 重新格式化文件。",
+            "type": "shell",
+            "command": "ament_uncrustify src/",
+            "presentation": { // "presentation" 字段定义了任务在 VSCode 中的展示方式
+                "panel": "dedicated", // "panel" 设置为 "dedicated"，表示任务输出在专用的终端面板中显示
+                "reveal": "silent", // "reveal" 设置为 "silent"，表示终端面板在任务运行时不会自动显示
+                "clear": true // "clear" 设置为 true，表示每次任务运行前，先清空终端面板
+            },
+            "problemMatcher": [
+                {
+                    "owner": "uncrustify", // "owner" 标识问题的所有者，通常是用于问题跟踪和筛选
+                    "source": "uncrustify", // "source" 提供了问题来源的标签，这里表明问题来自 uncrustify
+                    "fileLocation": "relative", // "fileLocation" 设置为 "relative"，表示文件位置是相对于工作区目录
+                    "pattern": [ // "pattern" 数组定义了一个正则表达式模式，用于解析问题输出
+                        // just the file name message
+                        {
+                            "regexp": "^(.*)'(.*)':",
+                            "kind": "file", // "kind" 表示这个匹配是关于文件的
+                            "file": 2, // "file" 指定正则表达式中第二个括号捕获的是文件名
+                            "message": 1 // "message" 指定第一个括号捕获的是错误消息
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "label": "cpplint",
+            "detail": "使用 cpplint 检测文件",
+            "type": "ament", // "type" 字段指定了任务的运行类型，"ament"表示使用 ROS 2 的构建和测试工具
+            "task": "cpplint", // "task" 字段指定具体执行的子任务，这里是 "cpplint"
+            "path": "src/", // "path" 字段指定 cpplint 检测的目录路径，这里设定为 "src/" 文件夹
+            "problemMatcher": "$ament_cpplint", // "problemMatcher" 字段用于匹配和解析输出中的问题，使用特定于 ament_cpplint 的预定义模式
+            "presentation": { // "presentation" 字段定义了任务在 VSCode 中的展示方式
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            },
+        },
+        {
+            "label": "cppcheck",
+            "detail": "运行静态代码检查器 cppcheck",
+            "type": "ament",
+            "task": "cppcheck",
+            "path": "src/",
+            "problemMatcher": "$ament_cppcheck", // 使用特定于 ament_cppcheck 的预定义模式
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            },
+            "options": { // "options" 字段提供了任务执行时的额外选项
+                "env": {
+                    "AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS": "1" // 允许使用慢速版本的 cppchecks
+                }
+            }
+        },
+        {
+            "label": "lint_cmake",
+            "detail": "在 cmake 文件上运行 lint",
+            "type": "ament",
+            "task": "lint_cmake",
+            "path": "src/",
+            "problemMatcher": "$ament_lint_cmake",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "flake8",
+            "detail": "在 python 文件上运行 flake8",
+            "type": "ament",
+            "task": "flake8",
+            "path": "src/",
+            "problemMatcher": "$ament_flake8",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "pep257",
+            "detail": "在 python 文件上运行 pep257",
+            "type": "ament",
+            "task": "pep257",
+            "path": "src/",
+            "problemMatcher": "$ament_pep257",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "xmllint",
+            "detail": "对xml文件运行xmllint",
+            "type": "ament",
+            "task": "xmllint",
+            "path": "src/",
+            "problemMatcher": "$ament_xmllint",
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "silent",
+                "clear": true
+            }
+        },
+        {
+            "label": "lint all",
+            "detail": "运行所有代码格式检查",
+            "dependsOn": [
+                "cppcheck",
+                "cpplint",
+                "flake8",
+                "lint_cmake",
+                "pep257",
+                "xmllint",
+                "uncrustify"
+            ],
+            "problemMatcher": []
+        },
+        // Workspace editing tasks
+        {
+            "label": "new ament_cmake package",
+            "detail": "从模板创建一个新的 ROS cpp 包",
+            "type": "shell",
+            "command": "ros2 pkg create --destination-directory src --build-type ament_cmake ${input:package}",
+            "problemMatcher": []
+        },
+        {
+            "label": "new ament_python package",
+            "detail": "Create a new ROS python package from a template.",
+            "type": "shell",
+            "command": "ros2 pkg create --destination-directory src --build-type ament_python ${input:package}",
+            "problemMatcher": []
+        },
+        {
+            "label": "import from workspace file",
+            "detail": "使用 vcs 导入工作区/rosinstall 文件指定的模块",
+            "type": "shell",
+            "command": "vcs import < src/ros2.repos src",
+            "problemMatcher": []
+        },
+        {
+            "label": "update workspace file",
+            "detail": "使用 vcs 将 src 中的存储库更新为工作区文件",
+            "type": "shell",
+            "command": "vcs export src > src/ros2.repos",
+            "problemMatcher": []
+        },
+        {
+            "label": "install dependencies",
+            "detail": "安装工作区 package.xml 文件中指定的所有依赖项",
+            "type": "shell",
+            "command": "sudo apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -y",
+            "problemMatcher": []
+        },
+        {
+            "label": "setup",
+            "detail": "设置工作区",
+            "type": "shell",
+            "command": "./setup.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "add submodules from .repos",
+            "detail": "为 .repos 文件中的所有存储库创建 git 子模块",
+            "type": "shell",
+            "command": "python3 .devcontainer/repos_to_submodules.py",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "package", // "id" 字段为这个输入项指定了一个唯一标识符，可以在后续的配置中通过此 ID 引用用户的输入
+            "type": "promptString", // "type" 字段指定了输入的类型，这里是 "promptString" 表示要求用户输入一个字符串
+            "description": "task 默认的包名", // "description" 提供描述，说明这个输入项是用来收集什么信息的
+            "default": "agv"
+        }
+    ]
+}

@@ -1,0 +1,112 @@
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    # 使用稀疏的Cholesky分解法来求解线性系统
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    # 预处理器用于加速求解过程，通过改善线性系统的条件数来提高求解效率
+    ceres_preconditioner: SCHUR_JACOBI
+    # 优化算法，结合了梯度下降和牛顿法的优点，适用于非线性最小二乘问题。
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    # 通过结合梯度下降和牛顿法来找到最优解。
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    # 不使用损失函数。损失函数通常用于处理异常值，通过降低异常值对优化结果的影响来提高求解的鲁棒性。
+    ceres_loss_function: None
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /lidar
+    mode: mapping # mapping
+
+    # 如果你希望在特定位置或在停靠点（dock）立即开始继续构建地图，可以使用这些参数进行配置。
+    map_file_name: /home/xvshuo/work/scl/gazebo_moviet2/src/agv/configs/my_map_serial
+    # map_start_pose: [0.0, 0.0, 0.0]
+    map_start_at_dock: true
+    debug_logging: false
+    # 1 表示使用所有的激光扫描数据进行SLAM；设为更高的值，则表示跳过一些扫描数据（例如，2表示使用每隔一帧的数据）
+    throttle_scans: 1
+    # 控制将SLAM生成的位姿信息发布为TF的频率。0.02 表示每20毫秒发布一次。如果设为 0，则不会发布TF信息。
+    transform_publish_period: 0.02 #if 0 never publishes odometry
+    # 指定地图更新的时间间隔（以秒为单位）。5.0表示每5秒更新一次地图。在此期间的扫描数据将被累积，更新时整合到地图
+    map_update_interval: 10.0
+    # 地图的分辨率，以米为单位。0.05 表示每个像素代表 5 厘米。分辨率越低，地图越精细，但计算成本和内存占用也越高。
+    resolution: 0.05
+    # 激光雷达的最大感应距离，以米为单位。20.0 表示最大感应距离为20米。超过这个距离的扫描数据将被忽略。
+    max_laser_range: 10.0 #for rastering images
+    # 指定在更新地图或位姿之前，两个有效数据之间的最小时间间隔（以秒为单位）。0.5表示至少间隔0.5秒更新一次。
+    minimum_time_interval: 0.5
+    # 设定查找TF变换数据的超时时间（以秒为单位）。0.2 表示0.2秒内必须获得有效的TF变换，否则操作会失败。
+    transform_timeout: 0.2
+    # TF缓存持续时间，以秒为单位。30 表示存储过去30秒内的TF变换数据，以便在进行SLAM时进行数据插值和对齐。
+    tf_buffer_duration: 30.
+    # 设置程序的栈大小，单位为字节。40000000（大约40MB）是一个较大的栈大小，适用于需要处理大型地图时的序列化操作。
+    stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
+    # 启用交互模式。true 表示允许在运行时通过交互界面（例如RViz中的交互工具）调整和优化SLAM的参数和结果
+    enable_interactive_mode: true
+
+    # General Parameters
+    # true 表示使用激光扫描匹配算法来估计机器人当前的位姿。
+    use_scan_matching: true
+    # true 表示将激光扫描数据的质心作为匹配参考点
+    use_scan_barycenter: true
+    # 更新位姿时，机器人必须移动的最小距离（以米为单位）。0.5 表示机器人至少移动0.5米才会更新位姿。
+    minimum_travel_distance: 0.5
+    # 更新位姿时，机器人必须旋转的最小角度（以弧度为单位）。0.5 表示机器人至少旋转0.5弧度（约28.6度）才会更新位姿
+    minimum_travel_heading: 0.5
+    # 用于扫描匹配的扫描数据缓冲区大小。10 表示最多存储10次扫描数据用于匹配。
+    scan_buffer_size: 10
+    # 扫描缓冲区内的最大扫描距离。10.0 表示只保存距离小于10米的扫描数据。
+    scan_buffer_maximum_scan_distance: 10.0
+    # 细粒度匹配的最低响应阈值。0.1 表示细粒度扫描匹配的最小响应值，用于判断匹配结果的质量。
+    link_match_minimum_response_fine: 0.1
+    # 相邻扫描之间的最大允许距离。1.5 表示相邻扫描的最大匹配距离为1.5米。
+    link_scan_maximum_distance: 1.5
+    # 回环检测的最大搜索距离。3.0 表示回环检测算法会在距离不超过3米的区域内寻找潜在的回环闭合。
+    loop_search_maximum_distance: 3.0
+    # true 表示激活回环闭合检测，以减少累积误差。
+    do_loop_closing: true 
+    # 至少需要多少次连续的扫描数据才能认为是一个有效的回环。
+    loop_match_minimum_chain_size: 10           
+    # 回环检测粗略匹配的最大方差。3.0 表示粗略匹配的方差最大为3.0，以筛选出可能的回环。
+    loop_match_maximum_variance_coarse: 3.0  
+    # 回环检测粗略匹配的最小响应值。0.35 响应值通常基于扫描数据的相似度计算得出。较高的响应值表示匹配质量较好。
+    loop_match_minimum_response_coarse: 0.35    
+    # 回环检测细粒度匹配的最小响应值。0.45 表示细粒度匹配的响应值必须至少达到0.45才能确认回环。
+    loop_match_minimum_response_fine: 0.45
+
+    # 相关性搜索用于匹配当前扫描数据与地图中的已有数据，确定机器人的位姿。相关性搜索通过计算扫描数据之间的相似度来进行匹配。
+    # 0.5 表示在0.5米范围内进行相关性搜索。
+    correlation_search_space_dimension: 0.5
+    # 相关性搜索空间的分辨率（以米为单位）
+    correlation_search_space_resolution: 0.01
+    # 相关性搜索空间的偏移量（以米为单位）。0.1 表示使用0.1米的偏移来模糊搜索空间。
+    correlation_search_space_smear_deviation: 0.1 
+
+    # 回环闭合参数
+    # 回环搜索空间的维度（以米为单位）。8.0 表示在8米范围内进行回环搜索。
+    loop_search_space_dimension: 8.0
+    # 回环搜索空间的分辨率（以米为单位）。0.05 表示以5厘米的分辨率进行回环搜索。
+    loop_search_space_resolution: 0.05
+    # 回环搜索空间的偏移量（以米为单位）。0.03 表示使用3厘米的偏移来模糊搜索空间。
+    loop_search_space_smear_deviation: 0.03
+
+    # 扫描匹配器参数
+    # 距离方差的惩罚系数。0.5 表示在匹配过程中对距离方差的惩罚因子。
+    distance_variance_penalty: 0.5      
+    # 角度方差的惩罚系数。1.0 表示在匹配过程中对角度方差的惩罚因子。
+    angle_variance_penalty: 1.0 
+    # 细粒度搜索的角度偏移（以弧度为单位）。0.00349 约等于0.2度，用于精细扫描匹配的角度偏移。
+    fine_search_angle_offset: 0.00349    
+    # 粗略搜索的角度偏移（以弧度为单位）。0.349 约等于20度，用于初步扫描匹配的角度偏移。 
+    coarse_search_angle_offset: 0.349   
+    # 粗略搜索的角度分辨率（以弧度为单位）。0.0349 约等于2度。
+    coarse_angle_resolution: 0.0349       
+    # 最小角度惩罚。0.9 表示对于小角度的匹配惩罚系数。 
+    minimum_angle_penalty: 0.9
+    # 最小距离惩罚。0.5 表示对于短距离的匹配惩罚系数。
+    minimum_distance_penalty: 0.5
+    # 启用响应扩展。true 表示在匹配过程中扩展响应，以更好地处理不确定性。
+    use_response_expansion: true

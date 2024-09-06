@@ -1,0 +1,16 @@
+twist_mux:
+  ros__parameters:
+    # twist_mux节点用于多路复用不同来源的速度指令，并根据优先级选择合适的指令进行发布。
+    topics:
+      navigation:
+        topic   : cmd_vel
+        timeout : 0.5
+        priority: 10
+      tracker:
+        topic   : cmd_vel_tracker
+        timeout : 0.5
+        priority: 20
+      cmd_vel:
+        topic   : cmd_vel_keyboard
+        timeout : 0.5
+        priority: 100

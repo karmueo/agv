@@ -1,0 +1,439 @@
+amcl:
+  ros__parameters:
+    use_sim_time: True
+    # 里程计旋转估计中的预期旋转噪声。
+    alpha1: 0.2
+    # 里程计旋转估计中的预期平移噪声。
+    alpha2: 0.2
+    # 里程计的平移估计中的预期平移噪声。
+    alpha3: 0.2
+    # 里程计的平移估计中的预期旋转噪声。
+    alpha4: 0.2
+    # 全向移动机器人（麦克纳姆轮子） 平移噪声。
+    alpha5: 0.2
+    # 机器人的基坐标系
+    base_frame_id: "base_footprint"
+    # 定义最大距离（以米为单位），在这个距离范围内，如果大多数粒子不同意某个激光束的测量结果，那么这个激光束的测量结果将被忽略。这有助于过滤掉不可靠的测量数据，从而提高定位的准确性。。
+    beam_skip_distance: 0.5
+    # 当激光束的测量结果与地图匹配不佳的比例超过设定值时，触发全面的检查和更新，以确保机器人能够重新获得准确的定位
+    beam_skip_error_threshold: 0.9
+    # 定义了一个百分比，当不匹配的激光束超过这个百分比时，算法会跳过这些激光束的测量结果。
+    beam_skip_threshold: 0.3
+    # 设置为true时，AMCL算法会启用beam_skip。如果某些激光束的测量结果与地图不匹配，根据预设的条件跳过这些测量结果
+    do_beamskip: false
+    # 定位系统发布的坐标系名称。
+    global_frame_id: "map"
+    # 这种情况通常是由于障碍物突然出现在激光束路径上导致的。较大的lambda_short值意味着衰减更快，算法会认为这些短距离测量结果是异常的，不太可能发生。反之算法认为这些短距离测量结果有更高的可能性发生，这些测量结果对定位的影响会被保留更长时间。
+    lambda_short: 0.1
+    # 当激光雷达测量到障碍物时，算法会在地图上对这些障碍物进行膨胀处理，以模拟激光束的扩散效应。laser_likelihood_max_dist参数定义了这个膨胀处理的最大距离（以米为单位）。超过这个距离的障碍物将不会被考虑在内。
+    laser_likelihood_max_dist: 2.0
+    # 最大扫描范围，-1.0 将导致使用激光报告的最大范围。
+    laser_max_range: 100.0
+    # 最小扫描范围，-1.0 将导致使用激光报告的最小范围。
+    laser_min_range: -1.0
+    # 使用哪个模型，beam、likelihood_field 或likelihood_field_prob。与likelihood_field相同，但包含beamskip功能（如果启用）。
+    # beam: 基于射线投射的模型，计算每个激光束的似然值。适用于简单的环境，但计算量较大。
+    # likelihood_field: 基于似然场的模型，使用预计算的距离场来快速计算激光束的似然值。适用于复杂环境，计算效率较高。
+    # likelihood_field_prob: 与likelihood_field类似，但包含了beamskip功能（如果启用）。当beamskip功能启用时，算法会跳过那些与地图不匹配的激光束测量结果，以提高定位的准确性和效率。
+    laser_model_type: "likelihood_field"
+    # 从initial_pose 参数设置初始姿态，而不是等待initial_pose 消息。
+    set_initial_pose: false
+    # 这个参数决定了在每次扫描中有多少激光束会被用于计算和更新机器人的位置。
+    max_beams: 60
+    # 允许的最大粒子数量。这个参数决定了粒子滤波器中粒子的上限数量，从而影响定位的精度和计算效率。
+    max_particles: 2000
+    # 允许的最小粒子数。
+    min_particles: 500
+    # 里程计坐标系
+    odom_frame_id: "odom"
+    # pf_err参数定义误差阈值，当粒子滤波的误差超过阈值时，算法会进行重采样，以确保粒子分布能够准确反映机器人的位姿
+    pf_err: 0.05
+    # 2.33 是 99% 的百分位，粒子的分布密度应该在这个范围内。用于评估粒子分布的紧密程度，决定是否需要进行重采样。
+    pf_z: 0.99
+    # 这个参数决定何时通过添加随机姿态来进行恢复。当粒子滤波器检测到粒子权重的快速变化时，需要添加随机姿态以增强定位的鲁棒性。
+    recovery_alpha_fast: 0.0
+    # 当粒子滤波器检测到粒子权重的缓慢变化时，可能需要添加随机姿态以增强定位的鲁棒性。
+    recovery_alpha_slow: 0.0
+    # 进行重采样之前需要进行的滤波器更新次数。较小的resample_interval值表示更频繁地进行重采样，可能会提高定位的精度，但也会增加计算量；较大的resample_interval值表示较少频繁地进行重采样，可能会减少计算量，但也可能降低定位的精度。
+    resample_interval: 1
+    # 机器人模型：
+    # nav2_amcl::DifferentialMotionModel：差速轮机器人
+    # nav2_amcl::OmniMotionModel：全向移动机器人
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    # 将估计的位姿和协方差存储到参数服务器的最大频率（以赫兹为单位）。这些存储的位姿和协方差将用于后续运行中初始化滤波器。如果将该参数设置为-1.0，则禁用此功能。每秒0.5次的频率存储最后估计的位姿和协方差。
+    save_pose_rate: 0.5
+    # z_hit模型中使用的高斯模型的标准差。这个参数决定了激光测量的匹配程度，即激光测量值与地图中障碍物的匹配程度。
+    sigma_hit: 0.2
+    # 设置tf_broadcast为false，会阻止AMCL发布全局坐标系和里程计坐标系之间的变换。
+    tf_broadcast: true
+    # 设置发布的变换的时间后置量，设置为1.0意味着发布的变换将被后置1秒钟，该变换在未来1秒内有效。
+    transform_tolerance: 60.0
+    # 机器人需要旋转至少0.2弧度（约11.46度）才能执行滤波器更新。
+    update_min_a: 0.2
+    # 机器人需要移动至少0.25米才能执行滤波器更新。
+    update_min_d: 0.25
+    # 模型 z_hit 部分的混合权重，所有使用的 z 权重之和必须为 1。对于光束模型，使用所有4个权重（z_hit、z_short、z_max和z_rand），而对于似然模型，使用z_hit和z_rand。
+    # z_hit表示激光测量值与地图中障碍物的匹配程度
+    z_hit: 0.5
+    # z_max当激光测量值达到传感器的最大测量范围时，z_max部分的权重较高。
+    z_max: 0.05
+    # z_rand表示激光测量值的随机噪声部分。当激光测量值由于噪声或其他原因而不可靠时，z_rand部分的权重较高。
+    z_rand: 0.5
+    # 当激光测量值由于未预期的障碍物而变短时，z_short部分的权重较高。
+    z_short: 0.05
+    # 要订阅的激光扫描主题。
+    scan_topic: lidar
+
+amcl_map_client:
+  ros__parameters:
+    use_sim_time: True
+
+amcl_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    wait_for_service_timeout: 1000
+    action_server_result_timeout: 900.0
+    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator/NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator/NavigateThroughPosesNavigator"
+    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
+    # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
+    # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
+    # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+
+    # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
+    # Built-in plugins are added automatically
+    # plugin_lib_names: []
+
+    error_code_names:
+      - compute_path_error_code
+      - follow_path_error_code
+
+bt_navigator_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    # 控制器运行频率 (Hz)。控制器每秒运行的次数
+    controller_frequency: 20.0
+    # 控制器服务器会在将里程计消息发送到控制器插件之前，对接收到的里程计消息中的速度部分进行过滤。如果里程计消息中的速度值低于设定的阈值（以米每秒为单位），这些速度值将被设置为0.0。
+    min_x_velocity_threshold: 0.001
+    # x表示前后，y表示左右 
+    min_y_velocity_threshold: 0.5
+    # thetab表示旋转
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    # 指定用于检查机器人进展的插件
+    progress_checker_plugin: "progress_checker"
+    # Progress checker parameters
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      # 机器人在执行某些任务时所需的最小移动半径
+      required_movement_radius: 0.5
+      # 机器人在执行某个任务时所允许的最大时间（以秒为单位）
+      movement_time_allowance: 10.0
+    # 指定用于检查目标是否已达到的插件
+    goal_checker_plugin: "goal_checker"
+    # Goal checker parameters
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      # 到达目标时的容差
+      xy_goal_tolerance: 0.4
+      yaw_goal_tolerance: 0.25
+      # True，机器人导航将在不同的任务之间保持状态信息，False，则每次任务开始时，导航系统将重置状态信息
+      stateful: True
+    # 列表，包含了所有启用的控制器插件的名称:
+    # FollowPath
+    # DWBLocalPlanner
+    # TEBLocalPlanner
+    controller_plugins: ["FollowPath"]
+    # DWB parameters
+    FollowPath:
+      plugin: "nav2_mppi_controller::MPPIController"
+      time_steps: 56
+      model_dt: 0.05
+      batch_size: 2000
+      ax_max: 3.0
+      ax_min: -3.0
+      ay_max: 3.0
+      az_max: 3.5
+      vx_std: 0.2
+      vy_std: 0.2
+      wz_std: 0.4
+      vx_max: 0.5
+      vx_min: -0.35
+      vy_max: 0.5
+      wz_max: 1.9
+      iteration_count: 1
+      prune_distance: 1.7
+      transform_tolerance: 0.1
+      temperature: 0.3
+      gamma: 0.015
+      motion_model: "DiffDrive"
+      visualize: true
+      regenerate_noises: true
+      TrajectoryVisualizer:
+        trajectory_step: 5
+        time_step: 3
+      AckermannConstraints:
+        min_turning_r: 0.2
+      critics: [
+        "ConstraintCritic", "CostCritic", "GoalCritic",
+        "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
+        "PathAngleCritic", "PreferForwardCritic"]
+      ConstraintCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 4.0
+      GoalCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 1.4
+      GoalAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0
+        threshold_to_consider: 0.5
+      PreferForwardCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 0.5
+      CostCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.81
+        critical_cost: 300.0
+        consider_footprint: true
+        collision_cost: 1000000.0
+        near_goal_distance: 1.0
+        trajectory_point_step: 2
+      PathAlignCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 14.0
+        max_path_occupancy_ratio: 0.05
+        trajectory_point_step: 4
+        threshold_to_consider: 0.5
+        offset_from_furthest: 20
+        use_path_orientations: false
+      PathFollowCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        offset_from_furthest: 5
+        threshold_to_consider: 1.4
+      PathAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 2.0
+        offset_from_furthest: 4
+        threshold_to_consider: 0.5
+        max_angle_to_furthest: 1.0
+        mode: 0
+
+controller_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: True
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      robot_radius: 0.22
+      plugins: ["voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        observation_sources: scan
+        scan:
+          topic: /lidar
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+      static_layer:
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
+  local_costmap_client:
+    ros__parameters:
+      use_sim_time: True
+  local_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: True
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 2.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      use_sim_time: True
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /lidar
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7
+      always_send_full_costmap: True
+  global_costmap_client:
+    ros__parameters:
+      use_sim_time: True
+  global_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: True
+
+map_server:
+  ros__parameters:
+    use_sim_time: True
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: True
+
+planner_server:
+  ros__parameters:
+    # 预期的路径规划频率
+    expected_planner_frequency: 20.0
+    use_sim_time: True
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      # 路径规划过程中允许的容差
+      tolerance: 0.6
+      # 是否使用A*算法，A*算法更高效，Dijkstra则能找到最短路径
+      use_astar: false
+      # 表示路径规划器允许在未知区域进行路径规划
+      allow_unknown: true
+
+planner_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+  
+smoother_server:
+  ros__parameters:
+    use_sim_time: True
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: True
+
+# TODO:新的nv2中改为Behavior Server¶
+behavior_server:
+  ros__parameters:
+    use_sim_time: True
+    # 覆盖机器人周围的一个小区域，通常是动态的，用于局部路径规划
+    local_costmap_topic: local_costmap/costmap_raw
+    # 覆盖整个已知环境地图，用于全局路径规划
+    global_costmap_topic: global_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    # 运行行为插件的频率。
+    cycle_frequency: 10.0
+    # 如果某个路径规划或避障动作需要超过10秒的时间，则需要增加该超时时间以避免目标句柄被丢弃
+    action_server_result_timeout: 10.0
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: base_link
+    behavior_plugins: ["spin", "backup", "wait", "drive_on_heading"]
+    transform_tolerance: 0.1
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+    # Spin行为用于让机器人在原地旋转，通常用于重新定位或避障。
+    spin:
+      plugin: "nav2_behaviors/Spin"
+    # 让机器人向后移动，通常用于避障或重新定位。
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+    # 让机器人等待
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+    # 这个参数定义了机器人在路径规划和执行过程中，向前模拟的时间长度，以预测可能发生的碰撞。
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: True
+    loop_rate: 20
+    stop_on_failure: false
+    action_server_result_timeout: 900.0
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: True
+      waypoint_pause_duration: 200
+
+velocity_smoother:
+  ros__parameters:
+    smoothing_frequency: 20.0
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.5, 0.0, 2.0]
+    min_velocity: [-0.5, 0.0, -2.0]
+    max_accel: [2.5, 0.0, 3.2]
+    max_decel: [-2.5, 0.0, -3.2]
+    odom_topic: "odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+robot_state_publisher:
+  ros__parameters:
+    use_sim_time: True

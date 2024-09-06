@@ -1,0 +1,87 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // Example launch of a python file
+    {
+      "name": "Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+    },
+    // gdb 启动 ros 可执行文件的示例
+    {
+      "name": "(gdb) 调试ros2节点, 使用merge-install",
+      "type": "cppdbg", // "type" 字段指定了调试器类型，这里使用的是 cppdbg，适用于 C++ 项目的调试。
+      "request": "launch", // "launch" 表示启动一个新的程序实例进行调试。
+      "program": "${workspaceFolder}/install/lib/${input:package}/${input:program}", // "program" 字段指定了要调试的程序的路径
+      "args": [], // "args" 字段指定了传递给程序的参数
+      "preLaunchTask": "packages-select-build", // "preLaunchTask" 字段指定了在启动调试会话之前要运行的任务
+      "stopAtEntry": true, // "stopAtEntry" 字段指定了是否在程序入口处停止
+      "cwd": "${workspaceFolder}", // "cwd" 字段指定了程序的工作目录
+      "externalConsole": false, // 调试输出将在 VSCode 的内部控制台中显示，而不是外部窗口。
+      "MIMode": "gdb", // "MIMode" 字段指定了用于调试的接口模式，这里是 gdb，适用于 GNU 调试器。
+      "setupCommands": [ // 用于在调试会话开始时配置调试器。
+        {
+          "description": "Enable pretty-printing for gdb", // 描述每个命令的作用，这里是为 gdb 启用美观打印。
+          "text": "-enable-pretty-printing", // 调试器执行的具体命令。
+          "ignoreFailures": true // 如果命令失败，不会终止调试会话，只是忽略失败。
+        }
+      ]
+    },
+    {
+      "name": "(gdb) 调试ros2节点, 使用isolated-install",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/install/${input:package}/lib/${input:package}/${input:program}",
+      "args": [],
+      "preLaunchTask": "packages-select-build",
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    //Example of a ROS Launch file
+    {
+      "name": "ROS: Launch File (merge-install)",
+      "type": "ros",
+      "request": "launch",
+      "preLaunchTask": "source",
+      "target": "${workspaceFolder}/install/share/${input:package}/launch/${input:ros_launch}",
+    },
+    {
+      "name": "ROS: Launch File (isolated-install)",
+      "type": "ros",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "target": "${workspaceFolder}/install/${input:package}/share/${input:package}/launch/${input:ros_launch}",
+    },
+  ],
+  "inputs": [
+    {
+      "id": "package",
+      "type": "promptString",
+      "description": "debug默认的包名",
+      "default": "cpp_pubsub"
+    },
+    {
+      "id": "program",
+      "type": "promptString",
+      "description": "debug默认程序",
+      "default": "listener"
+    },
+    {
+      "id": "ros_launch",
+      "type": "promptString",
+      "description": "debug默认的launch.py文件名",
+      "default": "cpp_pubsub_launch.py"
+    }
+  ]
+}
