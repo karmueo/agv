@@ -8,9 +8,11 @@
   - [Getting Started ](#getting-started-)
     - [安装依赖](#安装依赖)
     - [Building](#building)
-    - [URDF转SDF](#urdf转sdf)
-    - [添加模型路径到Gazebo资源路径](#添加模型路径到gazebo资源路径)
     - [启动示例](#启动示例)
+    - [启动键盘控制](#启动键盘控制)
+    - [建图](#建图)
+      - [加载之前的地图](#加载之前的地图)
+    - [导航](#导航)
 
 ## About <a name = "about"></a>
 
@@ -38,22 +40,34 @@ IGNITION_VERSION=fortress rosdep install -y -r -i --rosdistro ${ROS_DISTRO} --fr
 colcon build --merge-install --symlink-install --cmake-args "-DCMAKE_BUILD_TYPE=Release"
 ```
 
-### URDF转SDF
-
-```bash
-ros2 run aubo_description xacro2sdf.bash
-```
-
-### 添加模型路径到Gazebo资源路径
-
-```bash
-export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/path/to/your/models
-```
 
 ### 启动示例
 
 ```bash
 source install/local_setup.bash
 
-ros2 launch launch_robot.launch.py
+ros2 launch agv_sim launch_robot.launch.py
+```
+
+### 启动键盘控制
+
+```bash
+控制
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/cmd_vel_keyboard
+```
+### 建图
+
+```bash
+ros2 launch agv_sim online_async_launch.py
+```
+
+#### 加载之前的地图
+
+在rviz中使用SlamToolboxPlugin插件(可能需要自己编译slam_toolbox)。在Deserialize Map输入`install/share/agv_sim/maps/my_map`，然后点击`Deserialize Map`按钮。（注：需要机器人位于0 0 0位置）
+
+### 导航
+
+```bash
+ros2 run agv_sim navigation_launch.py
 ```

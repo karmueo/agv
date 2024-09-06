@@ -58,6 +58,12 @@ def generate_launch_description():
         executable="create",
         output="log",
         arguments=[
+            "-x",
+            "0",
+            "-y",
+            "0",
+            "-z",
+            "1",
             "-topic",
             "robot_description",
             "--ros-args",

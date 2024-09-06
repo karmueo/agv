@@ -19,12 +19,12 @@ slam_toolbox:
     map_frame: map
     base_frame: base_footprint
     scan_topic: /lidar
-    mode: mapping # mapping
+    mode:  mapping # mapping localization
 
     # 如果你希望在特定位置或在停靠点（dock）立即开始继续构建地图，可以使用这些参数进行配置。
-    map_file_name: ./configs/my_map_serial
+    map_file_name: /home/xvshuo/work/scl/agv/src/agv_sim/maps/mm
     # map_start_pose: [0.0, 0.0, 0.0]
-    map_start_at_dock: false
+    map_start_at_dock: true
     debug_logging: false
     # 1 表示使用所有的激光扫描数据进行SLAM；设为更高的值，则表示跳过一些扫描数据（例如，2表示使用每隔一帧的数据）
     throttle_scans: 1
