@@ -9,12 +9,12 @@
     - [安装依赖](#安装依赖)
     - [Building](#building)
     - [URDF转SDF](#urdf转sdf)
-    - [](#)
+    - [添加模型路径到Gazebo资源路径](#添加模型路径到gazebo资源路径)
     - [启动示例](#启动示例)
 
 ## About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+本项目是基于ros2 humble和Gazebo Fortress的agv仿真。
 
 ## Getting Started <a name = "getting_started"></a>
 
@@ -44,7 +44,7 @@ colcon build --merge-install --symlink-install --cmake-args "-DCMAKE_BUILD_TYPE=
 ros2 run aubo_description xacro2sdf.bash
 ```
 
-### 
+### 添加模型路径到Gazebo资源路径
 
 ```bash
 export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/path/to/your/models
@@ -55,5 +55,5 @@ export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/path/to/your/models
 ```bash
 source install/local_setup.bash
 
-ros2 launch moveit_assistant ign_moveit.launch.py
+ros2 launch launch_robot.launch.py
 ```

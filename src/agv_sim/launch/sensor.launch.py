@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description() -> LaunchDescription:
-    package_name = "agv"
+    package_name = "agv_sim"
 
     nodes = []
     ros_gz_bridge = Node(

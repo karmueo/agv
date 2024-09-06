@@ -265,7 +265,7 @@
             "id": "package", // "id" 字段为这个输入项指定了一个唯一标识符，可以在后续的配置中通过此 ID 引用用户的输入
             "type": "promptString", // "type" 字段指定了输入的类型，这里是 "promptString" 表示要求用户输入一个字符串
             "description": "task 默认的包名", // "description" 提供描述，说明这个输入项是用来收集什么信息的
-            "default": "agv"
+            "default": "agv_sim"
         }
     ]
 }

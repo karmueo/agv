@@ -19,7 +19,7 @@ def generate_launch_description():
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
 
-    package_name = "agv"  # <--- CHANGE ME
+    package_name = "agv_sim"  # <--- CHANGE ME
 
     # 机器人描述发布
     rsp = IncludeLaunchDescription(
@@ -35,7 +35,7 @@ def generate_launch_description():
 
     # 启动gazebo
     world = path.join(
-        get_package_share_directory("agv"),
+        get_package_share_directory(package_name),
         "worlds",
         "empty.sdf",
     )
@@ -74,7 +74,7 @@ def generate_launch_description():
         parameters=[
             {
                 "config_file": os.path.join(
-                    get_package_share_directory("agv"),
+                    get_package_share_directory(package_name),
                     "config",
                     "ros_gz_bridge.yaml",
                 ),

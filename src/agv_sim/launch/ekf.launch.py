@@ -14,7 +14,7 @@ def generate_launch_description():
                 output="screen",
                 parameters=[
                     os.path.join(
-                        get_package_share_directory("agv"),
+                        get_package_share_directory("agv_sim"),
                         "config",
                         "ekf.yaml",
                     )
