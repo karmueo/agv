@@ -1,0 +1,488 @@
+amcl:
+  ros__parameters:
+    use_sim_time: True
+    # 里程计旋转估计中的预期旋转噪声。
+    alpha1: 0.2
+    # 里程计旋转估计中的预期平移噪声。
+    alpha2: 0.2
+    # 里程计的平移估计中的预期平移噪声。
+    alpha3: 0.2
+    # 里程计的平移估计中的预期旋转噪声。
+    alpha4: 0.2
+    # 全向移动机器人（麦克纳姆轮子） 平移噪声。
+    alpha5: 0.2
+    # 机器人的基坐标系
+    base_frame_id: "base_footprint"
+    # 定义最大距离（以米为单位），在这个距离范围内，如果大多数粒子不同意某个激光束的测量结果，那么这个激光束的测量结果将被忽略。这有助于过滤掉不可靠的测量数据，从而提高定位的准确性。。
+    beam_skip_distance: 0.5
+    # 当激光束的测量结果与地图匹配不佳的比例超过设定值时，触发全面的检查和更新，以确保机器人能够重新获得准确的定位
+    beam_skip_error_threshold: 0.9
+    # 定义了一个百分比，当不匹配的激光束超过这个百分比时，算法会跳过这些激光束的测量结果。
+    beam_skip_threshold: 0.3
+    # 设置为true时，AMCL算法会启用beam_skip。如果某些激光束的测量结果与地图不匹配，根据预设的条件跳过这些测量结果
+    do_beamskip: false
+    # 定位系统发布的坐标系名称。
+    global_frame_id: "map"
+    # 这种情况通常是由于障碍物突然出现在激光束路径上导致的。较大的lambda_short值意味着衰减更快，算法会认为这些短距离测量结果是异常的，不太可能发生。反之算法认为这些短距离测量结果有更高的可能性发生，这些测量结果对定位的影响会被保留更长时间。
+    lambda_short: 0.1
+    # 当激光雷达测量到障碍物时，算法会在地图上对这些障碍物进行膨胀处理，以模拟激光束的扩散效应。laser_likelihood_max_dist参数定义了这个膨胀处理的最大距离（以米为单位）。超过这个距离的障碍物将不会被考虑在内。
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 100.0
+    laser_min_range: -1.0
+    laser_model_type: "likelihood_field"
+    # 这个参数决定了在每次扫描中有多少激光束会被用于计算和更新机器人的位置。
+    max_beams: 60
+    # 允许的最大粒子数量。这个参数决定了粒子滤波器中粒子的上限数量，从而影响定位的精度和计算效率。
+    max_particles: 2000
+    # 允许的最小粒子数。
+    min_particles: 500
+    odom_frame_id: "odom"
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.2
+    update_min_d: 0.25
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    # 要订阅的激光扫描主题。
+    scan_topic: lidar
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    bt_loop_duration: 20
+    default_server_timeout: 20
+    wait_for_service_timeout: 1000
+    default_nav_through_poses_bt_xml: rewritten_by_launch_file
+    default_nav_to_pose_bt_xml: rewritten_by_launch_file
+    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
+    # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
+    # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
+    # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+    plugin_lib_names:
+      - nav2_compute_path_to_pose_action_bt_node
+      - nav2_compute_path_through_poses_action_bt_node
+      - nav2_smooth_path_action_bt_node
+      - nav2_follow_path_action_bt_node
+      - nav2_spin_action_bt_node
+      - nav2_wait_action_bt_node
+      - nav2_assisted_teleop_action_bt_node
+      - nav2_back_up_action_bt_node
+      - nav2_drive_on_heading_bt_node
+      - nav2_clear_costmap_service_bt_node
+      - nav2_is_stuck_condition_bt_node
+      - nav2_goal_reached_condition_bt_node
+      - nav2_goal_updated_condition_bt_node
+      - nav2_globally_updated_goal_condition_bt_node
+      - nav2_is_path_valid_condition_bt_node
+      - nav2_initial_pose_received_condition_bt_node
+      - nav2_reinitialize_global_localization_service_bt_node
+      - nav2_rate_controller_bt_node
+      - nav2_distance_controller_bt_node
+      - nav2_speed_controller_bt_node
+      - nav2_truncate_path_action_bt_node
+      - nav2_truncate_path_local_action_bt_node
+      - nav2_goal_updater_node_bt_node
+      - nav2_recovery_node_bt_node
+      - nav2_pipeline_sequence_bt_node
+      - nav2_round_robin_node_bt_node
+      - nav2_transform_available_condition_bt_node
+      - nav2_time_expired_condition_bt_node
+      - nav2_path_expiring_timer_condition
+      - nav2_distance_traveled_condition_bt_node
+      - nav2_single_trigger_bt_node
+      - nav2_goal_updated_controller_bt_node
+      - nav2_is_battery_low_condition_bt_node
+      - nav2_navigate_through_poses_action_bt_node
+      - nav2_navigate_to_pose_action_bt_node
+      - nav2_remove_passed_goals_action_bt_node
+      - nav2_planner_selector_bt_node
+      - nav2_controller_selector_bt_node
+      - nav2_goal_checker_selector_bt_node
+      - nav2_controller_cancel_bt_node
+      - nav2_path_longer_on_approach_bt_node
+      - nav2_wait_cancel_bt_node
+      - nav2_spin_cancel_bt_node
+      - nav2_back_up_cancel_bt_node
+      - nav2_assisted_teleop_cancel_bt_node
+      - nav2_drive_on_heading_cancel_bt_node
+      - nav2_is_battery_charging_condition_bt_node
+
+bt_navigator_navigate_through_poses_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+bt_navigator_navigate_to_pose_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    # 控制器运行频率 (Hz)。控制器每秒运行的次数
+    controller_frequency: 20.0
+    # 控制器服务器会在将里程计消息发送到控制器插件之前，对接收到的里程计消息中的速度部分进行过滤。如果里程计消息中的速度值低于设定的阈值（以米每秒为单位），这些速度值将被设置为0.0。
+    # 最小速度阈值，x表示前后，y表示左右 
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugin: "progress_checker"
+    current_goal_checker: general_goal_checker  # 选择一个更精确的目标检查器
+    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
+    controller_plugins: ["FollowPath"]
+
+    # Progress checker parameters
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+    # Goal checker parameters
+    precise_goal_checker:
+     plugin: "nav2_controller::SimpleGoalChecker"
+     xy_goal_tolerance: 0.25
+     yaw_goal_tolerance: 0.25
+     stateful: True
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.5
+      yaw_goal_tolerance: 0.25
+    # 动态路径规划
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: True
+      min_vel_x: 0.05
+      min_vel_y: 0.0
+      max_vel_x: 0.5
+      max_vel_y: 0.0
+      max_vel_theta: 1.0
+      min_speed_xy: 0.05
+      max_speed_xy: 0.5
+      min_speed_theta: 0.05
+      acc_lim_x: 2.5
+      acc_lim_y: 0.0
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: 0.0
+      decel_lim_theta: -3.2
+      vx_samples: 20
+      vy_samples: 5
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: True
+      stateful: True
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: True
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      robot_radius: 0.22
+      plugins: ["voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        observation_sources: scan
+        scan:
+          topic: /lidar
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      use_sim_time: True
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /lidar
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+      always_send_full_costmap: True
+
+map_server:
+  ros__parameters:
+    use_sim_time: True
+    # Overridden in launch by the "map" launch configuration or provided default value.
+    # To use in yaml, remove the default "map" value in the tb3_simulation_launch.py file & provide full path to map below.
+    yaml_filename: ""
+
+map_saver:
+  ros__parameters:
+    use_sim_time: True
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: True
+
+slam_toolbox:
+  ros__parameters:
+
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    # 使用稀疏的Cholesky分解法来求解线性系统
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    # 预处理器用于加速求解过程，通过改善线性系统的条件数来提高求解效率
+    ceres_preconditioner: SCHUR_JACOBI
+    # 优化算法，结合了梯度下降和牛顿法的优点，适用于非线性最小二乘问题。
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    # 通过结合梯度下降和牛顿法来找到最优解。
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    # 不使用损失函数。损失函数通常用于处理异常值，通过降低异常值对优化结果的影响来提高求解的鲁棒性。
+    ceres_loss_function: None
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /lidar
+    mode:  mapping # mapping localization
+
+    # 如果你希望在特定位置或在停靠点（dock）立即开始继续构建地图，可以使用这些参数进行配置。
+    map_file_name: "" # /home/xvshuo/work/scl/agv/install/share/agv_sim/maps/my_map
+    # map_start_pose: [0.0, 0.0, 0.0]
+    map_start_at_dock: false
+    debug_logging: false
+    # 1 表示使用所有的激光扫描数据进行SLAM；设为更高的值，则表示跳过一些扫描数据（例如，2表示使用每隔一帧的数据）
+    throttle_scans: 1
+    # 控制将SLAM生成的位姿信息发布为TF的频率。0.02 表示每20毫秒发布一次。如果设为 0，则不会发布TF信息。
+    transform_publish_period: 0.02 #if 0 never publishes odometry
+    # 指定地图更新的时间间隔（以秒为单位）。5.0表示每5秒更新一次地图。在此期间的扫描数据将被累积，更新时整合到地图
+    map_update_interval: 10.0
+    # 地图的分辨率，以米为单位。0.05 表示每个像素代表 5 厘米。分辨率越低，地图越精细，但计算成本和内存占用也越高。
+    resolution: 0.05
+    # 激光雷达的最大感应距离，以米为单位。20.0 表示最大感应距离为20米。超过这个距离的扫描数据将被忽略。
+    max_laser_range: 10.0 #for rastering images
+    # 指定在更新地图或位姿之前，两个有效数据之间的最小时间间隔（以秒为单位）。0.5表示至少间隔0.5秒更新一次。
+    minimum_time_interval: 0.5
+    # 设定查找TF变换数据的超时时间（以秒为单位）。0.2 表示0.2秒内必须获得有效的TF变换，否则操作会失败。
+    transform_timeout: 0.2
+    # TF缓存持续时间，以秒为单位。30 表示存储过去30秒内的TF变换数据，以便在进行SLAM时进行数据插值和对齐。
+    tf_buffer_duration: 30.
+    # 设置程序的栈大小，单位为字节。40000000（大约40MB）是一个较大的栈大小，适用于需要处理大型地图时的序列化操作。
+    stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
+    # 启用交互模式。true 表示允许在运行时通过交互界面（例如RViz中的交互工具）调整和优化SLAM的参数和结果
+    enable_interactive_mode: true
+
+    # General Parameters
+    # true 表示使用激光扫描匹配算法来估计机器人当前的位姿。
+    use_scan_matching: true
+    # true 表示将激光扫描数据的质心作为匹配参考点
+    use_scan_barycenter: true
+    # 更新位姿时，机器人必须移动的最小距离（以米为单位）。0.5 表示机器人至少移动0.5米才会更新位姿。
+    minimum_travel_distance: 0.5
+    # 更新位姿时，机器人必须旋转的最小角度（以弧度为单位）。0.5 表示机器人至少旋转0.5弧度（约28.6度）才会更新位姿
+    minimum_travel_heading: 0.5
+    # 用于扫描匹配的扫描数据缓冲区大小。10 表示最多存储10次扫描数据用于匹配。
+    scan_buffer_size: 10
+    # 扫描缓冲区内的最大扫描距离。10.0 表示只保存距离小于10米的扫描数据。
+    scan_buffer_maximum_scan_distance: 10.0
+    # 细粒度匹配的最低响应阈值。0.1 表示细粒度扫描匹配的最小响应值，用于判断匹配结果的质量。
+    link_match_minimum_response_fine: 0.1
+    # 相邻扫描之间的最大允许距离。1.5 表示相邻扫描的最大匹配距离为1.5米。
+    link_scan_maximum_distance: 1.5
+    # 回环检测的最大搜索距离。3.0 表示回环检测算法会在距离不超过3米的区域内寻找潜在的回环闭合。
+    loop_search_maximum_distance: 3.0
+    # true 表示激活回环闭合检测，以减少累积误差。
+    do_loop_closing: true 
+    # 至少需要多少次连续的扫描数据才能认为是一个有效的回环。
+    loop_match_minimum_chain_size: 10           
+    # 回环检测粗略匹配的最大方差。3.0 表示粗略匹配的方差最大为3.0，以筛选出可能的回环。
+    loop_match_maximum_variance_coarse: 3.0  
+    # 回环检测粗略匹配的最小响应值。0.35 响应值通常基于扫描数据的相似度计算得出。较高的响应值表示匹配质量较好。
+    loop_match_minimum_response_coarse: 0.35    
+    # 回环检测细粒度匹配的最小响应值。0.45 表示细粒度匹配的响应值必须至少达到0.45才能确认回环。
+    loop_match_minimum_response_fine: 0.45
+
+    # 相关性搜索用于匹配当前扫描数据与地图中的已有数据，确定机器人的位姿。相关性搜索通过计算扫描数据之间的相似度来进行匹配。
+    # 0.5 表示在0.5米范围内进行相关性搜索。
+    correlation_search_space_dimension: 0.5
+    # 相关性搜索空间的分辨率（以米为单位）
+    correlation_search_space_resolution: 0.01
+    # 相关性搜索空间的偏移量（以米为单位）。0.1 表示使用0.1米的偏移来模糊搜索空间。
+    correlation_search_space_smear_deviation: 0.1 
+
+    # 回环闭合参数
+    # 回环搜索空间的维度（以米为单位）。8.0 表示在8米范围内进行回环搜索。
+    loop_search_space_dimension: 8.0
+    # 回环搜索空间的分辨率（以米为单位）。0.05 表示以5厘米的分辨率进行回环搜索。
+    loop_search_space_resolution: 0.05
+    # 回环搜索空间的偏移量（以米为单位）。0.03 表示使用3厘米的偏移来模糊搜索空间。
+    loop_search_space_smear_deviation: 0.03
+
+    # 扫描匹配器参数
+    # 距离方差的惩罚系数。0.5 表示在匹配过程中对距离方差的惩罚因子。
+    distance_variance_penalty: 0.5      
+    # 角度方差的惩罚系数。1.0 表示在匹配过程中对角度方差的惩罚因子。
+    angle_variance_penalty: 1.0 
+    # 细粒度搜索的角度偏移（以弧度为单位）。0.00349 约等于0.2度，用于精细扫描匹配的角度偏移。
+    fine_search_angle_offset: 0.00349    
+    # 粗略搜索的角度偏移（以弧度为单位）。0.349 约等于20度，用于初步扫描匹配的角度偏移。 
+    coarse_search_angle_offset: 0.349   
+    # 粗略搜索的角度分辨率（以弧度为单位）。0.0349 约等于2度。
+    coarse_angle_resolution: 0.0349       
+    # 最小角度惩罚。0.9 表示对于小角度的匹配惩罚系数。 
+    minimum_angle_penalty: 0.9
+    # 最小距离惩罚。0.5 表示对于短距离的匹配惩罚系数。
+    minimum_distance_penalty: 0.5
+    # 启用响应扩展。true 表示在匹配过程中扩展响应，以更好地处理不确定性。
+    use_response_expansion: true
+
+
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    use_sim_time: True
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      # 路径规划过程中允许的容差
+      tolerance: 0.5
+      # 是否使用A*算法，A*算法更高效，Dijkstra则能找到最短路径
+      use_astar: true
+      # 表示路径规划器允许在未知区域进行路径规划
+      allow_unknown: true
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: True
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: True
+
+behavior_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    spin:
+      plugin: "nav2_behaviors/Spin"
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    assisted_teleop:
+      plugin: "nav2_behaviors/AssistedTeleop"
+    global_frame: odom
+    robot_base_frame: base_link
+    transform_tolerance: 0.1
+    use_sim_time: True
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+robot_state_publisher:
+  ros__parameters:
+    use_sim_time: True
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: True
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: True
+      waypoint_pause_duration: 200
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: True
+    smoothing_frequency: 20.0
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.26, 0.0, 1.0]
+    min_velocity: [-0.26, 0.0, -1.0]
+    max_accel: [2.5, 0.0, 3.2]
+    max_decel: [-2.5, 0.0, -3.2]
+    odom_topic: "odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0

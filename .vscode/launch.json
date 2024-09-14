@@ -69,13 +69,13 @@
       "id": "package",
       "type": "promptString",
       "description": "debug默认的包名",
-      "default": "cpp_pubsub"
+      "default": "nav2_test_utils"
     },
     {
       "id": "program",
       "type": "promptString",
       "description": "debug默认程序",
-      "default": "listener"
+      "default": "goal_listener"
     },
     {
       "id": "ros_launch",

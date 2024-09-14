@@ -18,6 +18,7 @@
     "cmake.ignoreCMakeListsMissing": true,
     "files.associations": {
         "*.html": "html",
+        "*.sdf": "xml",
         "functional": "cpp",
         "cctype": "cpp",
         "clocale": "cpp",
@@ -92,6 +93,7 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.txx": "cpp"
     }
 }
