@@ -61,7 +61,6 @@
     <gazebo>
         <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
             <parameters>$(find agv_sim)/config/my_controllers.yaml</parameters>
-            <parameters>$(find agv_sim)/config/gaz_ros2_ctl_use_sim.yaml</parameters>
         </plugin>
     </gazebo>
 
