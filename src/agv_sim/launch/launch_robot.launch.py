@@ -119,9 +119,9 @@ def generate_launch_description():
     )
 
     # TODO: 3.运行 Rviz 并加载默认配置以查看 move_group 节点的状态
-    rviz_config_dir = os.path.join(
-        get_package_share_directory(package_name), "config", "rviz_config.rviz"
-    )
+    # rviz_config_dir = os.path.join(
+    #     get_package_share_directory(package_name), "config", "rviz_config.rviz"
+    # )
     rviz2 = Node(
         package="rviz2",
         executable="rviz2",
