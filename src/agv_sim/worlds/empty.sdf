@@ -13,7 +13,7 @@
         </plugin>
         <!-- 定义了物理引擎的参数配置 -->
         <physics name="5ms" type="ignored">
-            <max_step_size>0.005</max_step_size>
+            <max_step_size>0.02</max_step_size>
             <real_time_factor>1.0</real_time_factor>
         </physics>
 

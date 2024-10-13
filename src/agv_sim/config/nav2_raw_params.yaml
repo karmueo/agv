@@ -311,7 +311,7 @@ slam_toolbox:
     ceres_loss_function: None
 
     # ROS Parameters
-    odom_frame: odom
+    odom_frame: diff_cont/odom
     map_frame: map
     base_frame: base_footprint
     scan_topic: /lidar
@@ -437,7 +437,7 @@ behavior_server:
     costmap_topic: local_costmap/costmap_raw
     footprint_topic: local_costmap/published_footprint
     cycle_frequency: 10.0
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait", "send_sms"]
     spin:
       plugin: "nav2_behaviors/Spin"
     backup:
@@ -448,6 +448,12 @@ behavior_server:
       plugin: "nav2_behaviors/Wait"
     assisted_teleop:
       plugin: "nav2_behaviors/AssistedTeleop"
+    send_sms:
+      plugin: "nav2_sms_behavior/SendSms" # In Iron and older versions, "/" was used instead of "::"
+    account_sid: "111" # your sid
+    auth_token: "222" # your token
+    from_number: "333" # your number
+    to_number: "444" # the operations center number
     global_frame: odom
     robot_base_frame: base_link
     transform_tolerance: 0.1

@@ -1,131 +1,57 @@
-import os
+"""
+Author: 沈昌力
+Date: 2024-09-24 10:37:33
+LastEditTime: 2024-09-29 16:20:46
+LastEditors: 沈昌力
+Description: 
+FilePath: /agv/src/agv_sim/launch/ign.launch.py
+"""
 
-from ament_index_python.packages import get_package_share_directory
-
-
+from os.path import join
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import (
-    PathJoinSubstitution,
-)
-from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
-from os import path
+from ament_index_python.packages import get_package_share_directory
+from launch.actions import AppendEnvironmentVariable
 
 
 def generate_launch_description():
+    use_sim_time = LaunchConfiguration("use_sim_time", default=True)
 
-    # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
-    # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
+    agv_sim_path = get_package_share_directory("agv_sim")
+    world_file = LaunchConfiguration(
+        "world_file", default=join(agv_sim_path, "worlds", "small_warehouse.sdf")
+    )
+    gz_sim_share = get_package_share_directory("ros_gz_sim")
 
-    package_name = "agv_sim"  # <--- CHANGE ME
+    gz_sim = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(join(gz_sim_share, "launch", "gz_sim.launch.py")),
+        launch_arguments={
+            "gz_args": PythonExpression(["'", world_file, " -r'"])
+        }.items(),
+    )
 
-    # 机器人描述发布
-    rsp = IncludeLaunchDescription(
+    spawn_agv_sim_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [
-                os.path.join(
-                    get_package_share_directory(package_name), "launch", "rsp.launch.py"
-                )
-            ]
+            join(agv_sim_path, "launch", "agv_sim_ign_spawn.launch.py")
         ),
-        launch_arguments={"use_sim_time": "true", "use_ros2_control": "true"}.items(),
+        launch_arguments={
+            # Pass any arguments if your spawn.launch.py requires
+        }.items(),
     )
 
-    # 启动gazebo
-    world = path.join(
-        get_package_share_directory(package_name),
-        "worlds",
-        "empty.sdf",
-    )
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [
-                    FindPackageShare("ros_gz_sim"),
-                    "launch",
-                    "gz_sim.launch.py",
-                ]
-            )
-        ),
-        launch_arguments=[("gz_args", [world, " -r -v ", "3"])],
-    )
-
-    # 在gazebo中创建机器人
-    ros_gz_sim_create = Node(
-        package="ros_gz_sim",
-        executable="create",
-        output="log",
-        arguments=[
-            "-x",
-            "0",
-            "-y",
-            "0",
-            "-z",
-            "1",
-            "-topic",
-            "robot_description",
-            "--ros-args",
-            "--log-level",
-            "warn",
-        ],
-        parameters=[{"use_sim_time": True}],
-    )
-
-    # Bridge
-    ros_gz_bridge = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        parameters=[
-            {
-                "config_file": os.path.join(
-                    get_package_share_directory(package_name),
-                    "config",
-                    "ros_gz_bridge.yaml",
-                ),
-                "use_sim_time": True,
-            }
-        ],
-    )
-
-    # 把nav2，跟踪，cmd_vel等话题合并成一个话题以控制机器人
-    twist_mux_params = os.path.join(
-        get_package_share_directory(package_name), "config", "twist_mux.yaml"
-    )
-    twist_mux = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        parameters=[twist_mux_params, {"use_sim_time": True}],
-        remappings=[("/cmd_vel_out", "/diff_cont/cmd_vel_unstamped")],
-    )
-
-    # 驱动控制器
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["diff_cont"],
-        output="screen",
-        parameters=[{"use_sim_time": True}],
-    )
-
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_broad"],
-        output="screen",
-        parameters=[{"use_sim_time": True}],
-    )
-
-    # Launch them all!
     return LaunchDescription(
         [
-            rsp,
-            gazebo,
-            ros_gz_sim_create,
-            ros_gz_bridge,
-            twist_mux,
-            diff_drive_spawner,
-            joint_broad_spawner,
+            AppendEnvironmentVariable(
+                name="IGN_GAZEBO_RESOURCE_PATH", value=join(agv_sim_path, "worlds")
+            ),
+            AppendEnvironmentVariable(
+                name="IGN_GAZEBO_RESOURCE_PATH", value=join(agv_sim_path, "models")
+            ),
+            DeclareLaunchArgument("use_sim_time", default_value=use_sim_time),
+            DeclareLaunchArgument("world_file", default_value=world_file),
+            gz_sim,
+            spawn_agv_sim_node,
         ]
     )
