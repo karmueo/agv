@@ -40,7 +40,7 @@ class PatrolNode(BasicNavigator):
         self.latest_image = None
         # 创建图像订阅，订阅摄像头图像话题，回调函数为 image_callback，队列长度为 10
         self.subscription_image = self.create_subscription(
-            Image, "/bcr_bot/kinect_camera/image", self.image_callback, 10
+            Image, "/agv_sim/kinect_camera/image_raw", self.image_callback, 10
         )
 
     def get_pose_by_xyyaw(self, x, y, yaw):

@@ -52,3 +52,6 @@ CATKIN_IGNORE
 
 install/
 log
+
+aubo_description
+moveit_assistant

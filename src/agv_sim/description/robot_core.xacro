@@ -37,9 +37,6 @@
 
     <xacro:arg name="robot_namespace" default=""/>
     <xacro:arg name="wheel_odom_topic" default="odom" />
-    <xacro:arg name="camera_enabled" default="false" />
-    <xacro:arg name="stereo_camera_enabled" default="false" />
-    <xacro:arg name="two_d_lidar_enabled" default="false" />
     <xacro:arg name="publish_wheel_odom_tf" default="true" />
     <xacro:arg name="conveyor_enabled" default="false"/>
     <xacro:arg name="ground_truth_frame" default="map"/>
@@ -106,42 +103,40 @@
 
     <!-- ............................. 2D LIDAR ........................................ -->
 
-    <xacro:if value="$(arg two_d_lidar_enabled)">
 
-        <link name="two_d_lidar">
-            <collision>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <cylinder length="0.06" radius="0.075"/>
-                </geometry>
-            </collision>
+    <link name="two_d_lidar">
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.06" radius="0.075"/>
+            </geometry>
+        </collision>
 
-            <visual>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <cylinder length="0.06" radius="0.075"/>
-                </geometry>
-                <material name="aluminium"/>
-            </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.06" radius="0.075"/>
+            </geometry>
+            <material name="aluminium"/>
+        </visual>
 
-            <inertial>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <mass value="0.1"/>
-                <xacro:cylinder_inertia m="0.1" r="0.075" h="0.06"/>
-            </inertial>
-        </link>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.1"/>
+            <xacro:cylinder_inertia m="0.1" r="0.075" h="0.06"/>
+        </inertial>
+    </link>
 
-        <joint name="two_d_lidar_joint" type="fixed">
-            <parent link="base_link"/>
-            <child link="two_d_lidar"/>
-            <origin xyz="0.0 0 0.08" rpy="0 0 0" />
-        </joint>
+    <joint name="two_d_lidar_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="two_d_lidar"/>
+        <origin xyz="0.0 0 0.08" rpy="0 0 0" />
+    </joint>
 
-        <gazebo reference="two_d_lidar">
-            <material>Gazebo/White</material>
-        </gazebo>
+    <gazebo reference="two_d_lidar">
+        <material>Gazebo/White</material>
+    </gazebo>
 
-    </xacro:if>
 
     <!-- ............................. IMU ........................................ -->
 
@@ -155,95 +150,91 @@
 
     <!-- ............................. CAMERA ........................................ -->
 
-    <xacro:if value="$(arg camera_enabled)">
 
-        <!-- KINECT CAMERA -->
+    <!-- KINECT CAMERA -->
 
-        <link name="kinect_camera">
+    <link name="kinect_camera">
 
-            <collision>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <box size="0.07 0.3 0.09"/>
-                </geometry>
-            </collision>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.07 0.3 0.09"/>
+            </geometry>
+        </collision>
 
-            <visual>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="file://$(find agv_sim)/meshes/kinect/d415.dae"/>
-                </geometry>
-                <material name="black"/>
-            </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find agv_sim)/meshes/kinect/d415.dae"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
 
-            <inertial>
-                <mass value="0.01"/>
-                <xacro:box_inertia m="0.01" x="0.07" y="0.3" z = "0.09"/>
-            </inertial>
+        <inertial>
+            <mass value="0.01"/>
+            <xacro:box_inertia m="0.01" x="0.07" y="0.3" z = "0.09"/>
+        </inertial>
 
-        </link>
+    </link>
 
-        <joint name="kinect_camera_joint" type="fixed">
-            <origin rpy="0 0 0" xyz="${chassis_length/2} 0 ${chassis_height/7}"/>
-            <parent link="base_link"/>
-            <child link="kinect_camera"/>
-        </joint>
+    <joint name="kinect_camera_joint" type="fixed">
+        <origin rpy="0 0 0" xyz="${chassis_length/2} 0 ${chassis_height/7}"/>
+        <parent link="base_link"/>
+        <child link="kinect_camera"/>
+    </joint>
 
-        <link name="kinect_camera_optical"/>
+    <link name="kinect_camera_optical"/>
 
-        <joint name="kinect_camera_optical_joint" type="fixed">
-            <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
-            <parent link="kinect_camera"/>
-            <child link="kinect_camera_optical"/>
-        </joint>
+    <joint name="kinect_camera_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <parent link="kinect_camera"/>
+        <child link="kinect_camera_optical"/>
+    </joint>
 
-    </xacro:if>
 
     <!-- .............................STEREO CAMERA ........................................ -->
 
-    <xacro:if value="$(arg stereo_camera_enabled)">
 
-        <!-- STEREO CAMERA -->
+    <!-- STEREO CAMERA -->
 
-        <link name="stereo_camera">
+    <link name="stereo_camera">
 
-            <collision>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <box size="0.07 0.3 0.09"/>
-                </geometry>
-            </collision>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.07 0.3 0.09"/>
+            </geometry>
+        </collision>
 
-            <visual>
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="file://$(find agv_sim)/meshes/kinect/d415.dae"/>
-                </geometry>
-                <material name="black"/>
-            </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find agv_sim)/meshes/kinect/d415.dae"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
 
-            <inertial>
-                <mass value="0.01"/>
-                <xacro:box_inertia m="0.01" x="0.07" y="0.3" z = "0.09"/>
-            </inertial>
+        <inertial>
+            <mass value="0.01"/>
+            <xacro:box_inertia m="0.01" x="0.07" y="0.3" z = "0.09"/>
+        </inertial>
 
-        </link>
+    </link>
 
-        <joint name="stereo_camera_joint" type="fixed">
-            <origin rpy="0 0 0" xyz="${chassis_length/2} 0 ${chassis_height/7}"/>
-            <parent link="base_link"/>
-            <child link="stereo_camera"/>
-        </joint>
+    <joint name="stereo_camera_joint" type="fixed">
+        <origin rpy="0 0 0" xyz="${chassis_length/2} 0 ${chassis_height/7}"/>
+        <parent link="base_link"/>
+        <child link="stereo_camera"/>
+    </joint>
 
-        <link name="stereo_camera_optical"/>
+    <link name="stereo_camera_optical"/>
 
-        <joint name="stereo_camera_optical_joint" type="fixed">
-            <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
-            <parent link="stereo_camera"/>
-            <child link="stereo_camera_optical"/>
-        </joint>
+    <joint name="stereo_camera_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <parent link="stereo_camera"/>
+        <child link="stereo_camera_optical"/>
+    </joint>
 
-    </xacro:if>
 
     <!-- ............................. ROOF ........................................ -->
 

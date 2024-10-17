@@ -1,3 +1,11 @@
+<!--
+ * @Author: 沈昌力
+ * @Date: 2024-09-06 10:29:35
+ * @LastEditTime: 2024-10-14 09:12:06
+ * @LastEditors: 沈昌力
+ * @Description: 
+ * @FilePath: /agv/README.md
+-->
 # Project Title
 
 ## Table of Contents
@@ -52,7 +60,7 @@ export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:${PWD}/install/share
 
 source install/local_setup.bash
 
-ros2 launch agv_sim launch_robot.launch.py
+ros2 launch agv_sim gazebo.launch.py
 ```
 
 ### 启动键盘控制（可选）
@@ -62,7 +70,7 @@ ros2 launch agv_sim launch_robot.launch.py
 ```bash
 控制
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/cmd_vel_keyboard
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 ### 建图
 

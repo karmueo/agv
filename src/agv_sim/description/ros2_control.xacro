@@ -2,9 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:macro name="agv_sim_ros2_control">
-        <ros2_control name="AgvSimGazeboSystem" type="system">
+        <ros2_control name="GazeboSystem" type="system">
             <hardware>
-                <plugin>ign_ros2_control/IgnitionSystem</plugin>
+                <!-- <plugin>ign_ros2_control/IgnitionSystem</plugin> -->
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
             </hardware>
             <joint name="middle_left_wheel_joint">
                 <command_interface name="velocity">
@@ -25,8 +26,16 @@
         </ros2_control>
 
         <gazebo>
-            <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-                <parameters>$(find agv_sim)/config/ros2_controller.yaml</parameters>
+            <!-- <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+                <parameters>$(find bcr_bot)/config/ros2_controller.yaml</parameters>
+                <ros>
+                    <remapping>/diff_drive_controller/cmd_vel_unstamped:=/cmd_vel</remapping>
+                    <remapping>/diff_drive_controller/odom:=/odom</remapping>
+                </ros>
+            </plugin> -->
+
+            <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+                <parameters>$(find bcr_bot)/config/ros2_controller.yaml</parameters>
                 <ros>
                     <remapping>/diff_drive_controller/cmd_vel_unstamped:=/cmd_vel</remapping>
                     <remapping>/diff_drive_controller/odom:=/odom</remapping>
