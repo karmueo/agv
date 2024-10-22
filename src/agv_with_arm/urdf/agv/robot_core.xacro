@@ -3,7 +3,7 @@
 
     <!--................................ XACRO CONSTANTS .............................. -->
 
-    <xacro:property name="chassis_mass" value="70"/>
+    <xacro:property name="chassis_mass" value="5"/>
     <xacro:property name="chassis_length" value="0.9"/>
     <xacro:property name="chassis_width" value="0.64"/>
     <xacro:property name="chassis_height" value="0.19"/>
@@ -18,7 +18,7 @@
     <xacro:property name="trolley_wheel_friction" value="0.0"/>
     <xacro:property name="trolley_wheel_radius" value="0.06"/>
     <!-- a small constant -->
-    <xacro:property name="eps" value="0.002"/>
+    <xacro:property name="eps" value="0.001"/>
 
     <xacro:property name="traction_wheel_radius" value="0.1"/>
     <xacro:property name="traction_wheel_width" value="0.05"/>

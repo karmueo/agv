@@ -41,6 +41,7 @@ def generate_launch_description():
                     [
                         "xacro ",
                         xacro_path,
+                        " arm_enabled:=false",  # 传递参数 arm_enabled
                     ]
                 )
             }

@@ -1,26 +1,21 @@
-#!/usr/bin/python3
-import os
+#!/usr/bin/env python3
+
+from os.path import join
+import xacro
+
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
-from launch.actions import (
-    IncludeLaunchDescription,
-    RegisterEventHandler,
-    DeclareLaunchArgument,
-    TimerAction,
-)
-from launch.conditions import UnlessCondition
-from launch.event_handlers import OnProcessExit
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-import xacro
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler, TimerAction
+from launch.substitutions import LaunchConfiguration, Command
 import yaml
+from launch_ros.actions import Node
+from launch.event_handlers import OnProcessExit
 
 
 # LOAD FILE:
 def load_file(package_name, file_path):
     package_path = get_package_share_directory(package_name)
-    absolute_file_path = os.path.join(package_path, file_path)
+    absolute_file_path = join(package_path, file_path)
     try:
         with open(absolute_file_path, "r") as file:
             return file.read()
@@ -32,7 +27,7 @@ def load_file(package_name, file_path):
 # LOAD YAML:
 def load_yaml(package_name, file_path):
     package_path = get_package_share_directory(package_name)
-    absolute_file_path = os.path.join(package_path, file_path)
+    absolute_file_path = join(package_path, file_path)
     try:
         with open(absolute_file_path, "r") as file:
             return yaml.safe_load(file)
@@ -41,43 +36,88 @@ def load_yaml(package_name, file_path):
         return None
 
 
-# ========== **GENERATE LAUNCH DESCRIPTION** ========== #
+def get_xacro_to_doc(xacro_file_path, mappings):
+    doc = xacro.parse(open(xacro_file_path))
+    xacro.process_doc(doc, mappings=mappings)
+    return doc
+
+
 def generate_launch_description():
+    # Get package's share directory path
+    this_package_path = get_package_share_directory("agv_with_arm")
 
-    # *********************** Gazebo *********************** #
+    # Retrieve launch configuration arguments
+    position_x = LaunchConfiguration("position_x")
+    position_y = LaunchConfiguration("position_y")
+    orientation_yaw = LaunchConfiguration("orientation_yaw")
 
-    # DECLARE Gazebo WORLD file:
-    aubo_world = os.path.join(
-        get_package_share_directory("agv_with_arm"), "worlds", "aubo.world"
-    )
-    # DECLARE Gazebo LAUNCH file:
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
+    # Path to the Xacro file
+    xacro_path = join(this_package_path, "urdf", "agv", "robot.urdf.xacro")
+
+    robot_description = {
+        "robot_description": Command(
             [
-                os.path.join(get_package_share_directory("gazebo_ros"), "launch"),
-                "/gazebo.launch.py",
+                "xacro ",
+                xacro_path,
+                " arm_enabled:=true",  # 传递参数 arm_enabled
             ]
-        ),
-        launch_arguments={"world": aubo_world}.items(),
+        )
+    }
+
+    # Launch the robot_state_publisher node
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        output="screen",
+        parameters=[robot_description],
     )
 
-    # ***** ROBOT DESCRIPTION ***** #
-    # ROBOT Description file package:
-    aubo_description_path = os.path.join(get_package_share_directory("agv_with_arm"))
-    # ROBOT urdf file path:
-    xacro_file = os.path.join(aubo_description_path, "urdf", "arm", "aubo.gazebo.xacro")
-    # Generate ROBOT_DESCRIPTION for ROBOT:
-    doc = xacro.parse(open(xacro_file))
-    xacro.process_doc(doc)
-    robot_description_config = doc.toxml()
-    robot_description = {"robot_description": robot_description_config}
-
-    # SPAWN ROBOT TO GAZEBO:
+    # Launch the spawn_entity node to spawn the robot in Gazebo
     spawn_entity = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
-        arguments=["-topic", "robot_description", "-entity", "aubo"],
         output="screen",
+        arguments=[
+            "-topic",
+            "/robot_description",
+            "-entity",
+            "agv_sim_bot",
+            "-z",
+            "0.28",
+            "-x",
+            position_x,
+            "-y",
+            position_y,
+            "-z",
+            "0.2",
+            "-Y",
+            orientation_yaw,
+        ],
+    )
+
+    # 驱动控制器
+    diff_drive_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["diff_drive_controller"],
+        output="screen",
+        parameters=[{"use_sim_time": True}],
+    )
+
+    joint_broad_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster"],
+        output="screen",
+        parameters=[{"use_sim_time": True}],
+    )
+
+    # Joint TRAJECTORY Controller:
+    joint_trajectory_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["aubo_controller", "-c", "/controller_manager"],
     )
 
     # ***** STATIC TRANSFORM ***** #
@@ -94,59 +134,12 @@ def generate_launch_description():
             "0.0",
             "0.0",
             "0.0",
-            "world",
+            "arm_base_link",
             "roof_link",
         ],
     )
-    # ld.add_action(
-    #             Node(
-    #                 package="tf2_ros",
-    #                 executable="static_transform_publisher",
-    #                 name=f"static_transform_publisher{name_counter}",
-    #                 output="log",
-    #                 arguments=[
-    #                     "--frame-id",
-    #                     vj.parent_frame,
-    #                     "--child-frame-id",
-    #                     vj.child_link,
-    #                 ],
-    #             )
-    #         )
-
-    # Publish TF:
-    robot_state_publisher = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        output="both",
-        parameters=[robot_description, {"use_sim_time": True}],
-    )
-
-    # ***** ROS2_CONTROL -> LOAD CONTROLLERS ***** #
-
-    # Joint STATE BROADCASTER:
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "joint_state_broadcaster",
-            "--controller-manager",
-            "/controller_manager",
-        ],
-    )
-    # Joint TRAJECTORY Controller:
-    joint_trajectory_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["aubo_controller", "-c", "/controller_manager"],
-    )
 
     # *********************** MoveIt!2 *********************** #
-
-    # Command-line argument: RVIZ file?
-    rviz_arg = DeclareLaunchArgument(
-        "rviz_file", default_value="False", description="Load RVIZ file."
-    )
-
     # *** PLANNING CONTEXT *** #
     # Robot description, SRDF:
     robot_description_semantic_config = load_file("agv_with_arm", "config/aubo.srdf")
@@ -207,10 +200,13 @@ def generate_launch_description():
         ],
     )
 
+    # Command-line argument: RVIZ file?
+    rviz_arg = DeclareLaunchArgument(
+        "rviz_file", default_value="False", description="Load RVIZ file."
+    )
     # RVIZ:
-    load_RVIZfile = LaunchConfiguration("rviz_file")
-    rviz_base = os.path.join(get_package_share_directory("agv_with_arm"), "config")
-    rviz_full_config = os.path.join(rviz_base, "agv_with_arm.rviz")
+    rviz_base = join(get_package_share_directory("agv_with_arm"), "config")
+    rviz_full_config = join(rviz_base, "agv_with_arm.rviz")
     rviz_node_full = Node(
         package="rviz2",
         executable="rviz2",
@@ -224,29 +220,35 @@ def generate_launch_description():
             kinematics_yaml,
             {"use_sim_time": True},
         ],
-        condition=UnlessCondition(load_RVIZfile),
     )
 
     return LaunchDescription(
         [
-            # Gazebo nodes:
-            gazebo,
-            spawn_entity,
-            # ROS2_CONTROL:
-            static_tf,
+            DeclareLaunchArgument("position_x", default_value="0.0"),
+            DeclareLaunchArgument("position_y", default_value="0.0"),
+            DeclareLaunchArgument("orientation_yaw", default_value="0.0"),
             robot_state_publisher,
-            # ROS2 Controllers:
+            spawn_entity,
+            static_tf,
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=spawn_entity,
                     on_exit=[
-                        joint_state_broadcaster_spawner,
+                        joint_broad_spawner,
                     ],
                 )
             ),
             RegisterEventHandler(
                 OnProcessExit(
-                    target_action=joint_state_broadcaster_spawner,
+                    target_action=joint_broad_spawner,
+                    on_exit=[
+                        diff_drive_spawner,
+                    ],
+                )
+            ),
+            RegisterEventHandler(
+                OnProcessExit(
+                    target_action=joint_broad_spawner,
                     on_exit=[
                         joint_trajectory_controller_spawner,
                     ],

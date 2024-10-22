@@ -1,27 +1,25 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
-    <xacro:arg name="use_ros2_control" default="true"/>
+    <xacro:arg name="arm_enabled" default="true"/>
     <xacro:arg name="robot_namespace" default="agv_with_arm"/>
 
     <!-- robot description -->
     <xacro:include filename="robot_core.xacro" />
 
     <!-- 机械臂 -->
-    <!-- <xacro:include filename="$(find my_arm)/config/panda.urdf.xacro" /> -->
-    <!-- <xacro:include filename="$(find moveit_resources_panda_description)/urdf/panda.urdf" />
+    <xacro:if value="$(arg arm_enabled)">
+        <xacro:include filename="$(find agv_with_arm)/urdf/arm/aubo.gazebo.xacro" />
 
-    <joint name="arm_joint" type="fixed">
-        <parent link="base_link" />
-        <child link = "panda_link0" />
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-    </joint> -->
+        <joint name="arm_joint" type="fixed">
+            <parent link="roof_link" />
+            <child link = "arm_base_link" />
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+        </joint>
+    </xacro:if>
 
-    <!-- 车轮控制器 -->
+    <!-- 控制器 -->
     <xacro:include filename="$(find agv_with_arm)/urdf/agv/ros2_control.xacro" />
-    <xacro:agv_sim_ros2_control />
-
-    <!-- 机械臂控制器 -->
-    <!-- <xacro:include filename="$(find my_arm)/config/panda.ros2_control.xacro" /> -->
+    <xacro:agv_sim_ros2_control arm_enabled="$(arg arm_enabled)"/>
 
     <!-- gazebo 仿真配置 -->
     <xacro:include filename="$(find agv_with_arm)/urdf/agv/gazebo_sensor.xacro"/>

@@ -2,7 +2,6 @@
 <sdf version="1.6">
     <world name="default">
 
-
         <model name="aws_robomaker_warehouse_RoofB_01_001">
             <include>
                 <uri>model://aws_robomaker_warehouse_RoofB_01</uri>
@@ -70,7 +69,7 @@
             <include>
                 <uri>model://aws_robomaker_warehouse_GroundB_01</uri>
             </include>
-            <pose frame="">0.0 0.0 -0.090092 0 0 0</pose>
+            <pose frame="">0.0 0.0 0.0 0 0 0</pose>
         </model>
 
         <model name="aws_robomaker_warehouse_Lamp_01_005">

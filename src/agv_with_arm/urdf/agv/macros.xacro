@@ -32,7 +32,7 @@
                 <xacro:sphere_inertia m="${trolley_wheel_mass}" r="${trolley_wheel_radius}"/>
             </inertial>
 
-            <mu>0.0</mu>
+            <mu>5.0</mu>
         </link>
 
         <joint name="${cardinality}_${dexterity}_wheel_joint" type="fixed">
@@ -55,6 +55,25 @@
                     <cylinder length="${traction_wheel_width}" radius="${traction_wheel_radius}"/>
                 </geometry>
                 <self_collide>false</self_collide>
+                <!-- 添加表面接触属性来模拟压力变形 -->
+                <surface>
+                    <contact>
+                        <ode>
+                            <kp>50000.0</kp>                            <!-- 弹簧刚度系数，用于模拟轮子和地面接触时的变形 -->
+                            <kd>1.0</kd>                            <!-- 阻尼系数，用于抑制快速变形 -->
+                            <erp>0.2</erp>                            <!-- 误差修正参数，表示接触的恢复率 -->
+                            <cfm>0.001</cfm>                            <!-- 约束力混合参数，表示柔性程度 -->
+                        </ode>
+                    </contact>
+                    <friction>
+                        <ode>
+                            <mu>10.0</mu>                            <!-- 主摩擦系数 -->
+                            <mu2>5.0</mu2>                            <!-- 次摩擦系数 -->
+                            <slip1>0.01</slip1>                            <!-- 在主方向的滑动 -->
+                            <slip2>0.01</slip2>                            <!-- 在次方向的滑动 -->
+                        </ode>
+                    </friction>
+                </surface>
             </collision>
 
             <inertial>
@@ -63,7 +82,7 @@
                 <xacro:cylinder_inertia m="${traction_wheel_mass}" r="${traction_wheel_radius}" h="${traction_wheel_width}"/>
             </inertial>
 
-            <mu>5.0</mu>
+            <mu>10.0</mu>
         </link>
 
         <joint name="${cardinality}_${dexterity}_wheel_joint" type="continuous">

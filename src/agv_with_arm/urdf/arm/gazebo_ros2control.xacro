@@ -5,12 +5,12 @@
     <xacro:macro name="aubo_ros2control">
 
         <!-- ===== Gazebo ROS2_CONTROL plugin ===== -->
-        <gazebo>
-            <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <!-- <gazebo>
+            <plugin filename="libgazebo_ros2_control.so" name="arm_gazebo_ros2_control">
                 <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
                 <parameters>$(find agv_with_arm)/config/aubo_controller.yaml</parameters>
             </plugin>
-        </gazebo>
+        </gazebo> -->
 
         <!-- ========== ROS2 CONTROL ========== -->
         <ros2_control name="GazeboSystem" type="system">
