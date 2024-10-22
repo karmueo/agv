@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
 from os.path import join
-
-
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    RegisterEventHandler,
+)
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import SetEnvironmentVariable
 from launch.actions import AppendEnvironmentVariable
 from launch.conditions import IfCondition, UnlessCondition
+from launch.event_handlers import OnProcessExit
 
 
 def generate_launch_description():
@@ -37,7 +40,7 @@ def generate_launch_description():
     # spawing
     spawn_with_arm_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            join(agv_sim_path, "launch", "sim_agv_arm_moveit_spawn.launch.py")
+            join(agv_sim_path, "launch", "sim_agv_arm_spawn.launch.py")
         ),
         condition=IfCondition(arm_enabled),
     )
@@ -67,5 +70,11 @@ def generate_launch_description():
             gazebo,
             spawn_with_arm_node,
             spawn_no_arm_node,
+            # RegisterEventHandler(
+            #     OnProcessExit(
+            #         target_action=gazebo,
+            #         on_exit=[spawn_with_arm_node, spawn_no_arm_node],
+            #     )
+            # ),
         ]
     )
