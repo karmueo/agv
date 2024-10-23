@@ -15,11 +15,13 @@
             <child link = "arm_base_link" />
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
         </joint>
+
+        <!-- 控制器 -->
+        <xacro:include filename="$(find agv_with_arm)/urdf/arm/ros2_control.xacro" />
+        <xacro:arm_ros2_control />
+
     </xacro:if>
 
-    <!-- 控制器 -->
-    <xacro:include filename="$(find agv_with_arm)/urdf/agv/ros2_control.xacro" />
-    <xacro:agv_sim_ros2_control arm_enabled="$(arg arm_enabled)"/>
 
     <!-- gazebo 仿真配置 -->
     <xacro:include filename="$(find agv_with_arm)/urdf/agv/gazebo_sensor.xacro"/>

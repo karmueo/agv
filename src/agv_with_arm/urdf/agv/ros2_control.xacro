@@ -6,6 +6,7 @@
             <hardware>
                 <plugin>gazebo_ros2_control/GazeboSystem</plugin>
             </hardware>
+            <!-- 使用ros2_control来控制小车 -->
             <joint name="middle_left_wheel_joint">
                 <command_interface name="velocity">
                     <param name="min">-10</param>

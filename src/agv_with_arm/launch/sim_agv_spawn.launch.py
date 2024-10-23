@@ -95,7 +95,7 @@ def generate_launch_description():
             DeclareLaunchArgument("orientation_yaw", default_value="0.0"),
             robot_state_publisher,
             spawn_entity,
-            diff_drive_spawner,
-            joint_broad_spawner,
+            # diff_drive_spawner,
+            # joint_broad_spawner,
         ]
     )

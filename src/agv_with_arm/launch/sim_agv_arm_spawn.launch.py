@@ -97,13 +97,13 @@ def generate_launch_description():
     )
 
     # 驱动控制器
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["diff_drive_controller"],
-        output="screen",
-        parameters=[{"use_sim_time": True}],
-    )
+    # diff_drive_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["diff_drive_controller"],
+    #     output="screen",
+    #     parameters=[{"use_sim_time": True}],
+    # )
 
     joint_broad_spawner = Node(
         package="controller_manager",
@@ -155,14 +155,14 @@ def generate_launch_description():
                     ],
                 )
             ),
-            RegisterEventHandler(
-                OnProcessExit(
-                    target_action=joint_broad_spawner,
-                    on_exit=[
-                        diff_drive_spawner,
-                    ],
-                )
-            ),
+            # RegisterEventHandler(
+            #     OnProcessExit(
+            #         target_action=joint_broad_spawner,
+            #         on_exit=[
+            #             diff_drive_spawner,
+            #         ],
+            #     )
+            # ),
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=joint_broad_spawner,

@@ -3,12 +3,12 @@
 
     <!--................................ XACRO CONSTANTS .............................. -->
 
-    <xacro:property name="chassis_mass" value="1"/>
+    <xacro:property name="chassis_mass" value="70"/>
     <xacro:property name="chassis_length" value="0.9"/>
     <xacro:property name="chassis_width" value="0.64"/>
     <xacro:property name="chassis_height" value="0.19"/>
 
-    <xacro:property name="traction_wheel_mass" value="0.5"/>
+    <xacro:property name="traction_wheel_mass" value="1"/>
     <xacro:property name="traction_wheel_base" value="0.88"/>
     <xacro:property name="traction_max_wheel_torque" value="20000"/>
     <xacro:property name="traction_wheel_friction" value="5.0"/>
@@ -18,7 +18,7 @@
     <xacro:property name="trolley_wheel_friction" value="0.0"/>
     <xacro:property name="trolley_wheel_radius" value="0.06"/>
     <!-- a small constant -->
-    <xacro:property name="eps" value="0.001"/>
+    <xacro:property name="eps" value="0.002"/>
 
     <xacro:property name="traction_wheel_radius" value="0.1"/>
     <xacro:property name="traction_wheel_width" value="0.05"/>
@@ -37,10 +37,15 @@
 
     <xacro:arg name="robot_namespace" default=""/>
     <xacro:arg name="wheel_odom_topic" default="odom" />
+    <xacro:arg name="camera_enabled" default="false" />
+    <xacro:arg name="stereo_camera_enabled" default="false" />
+    <xacro:arg name="two_d_lidar_enabled" default="false" />
     <xacro:arg name="publish_wheel_odom_tf" default="true" />
     <xacro:arg name="conveyor_enabled" default="false"/>
     <xacro:arg name="ground_truth_frame" default="map"/>
-    <xacro:arg name="sim_ign" default="true" />
+    <xacro:arg name="sim_gazebo" default="false" />
+    <xacro:arg name="sim_ign" default="false" />
+    <xacro:arg name="sim_gz" default="false" />
     <xacro:arg name="odometry_source" default="world" />
 
     <xacro:property name="odometry_source" value="$(arg odometry_source)"/>

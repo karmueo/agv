@@ -7,6 +7,39 @@
             <static>false</static>
         </gazebo>
 
+        <!-- .....................MULTI WHEEL DIFF DRIVE ................................... -->
+
+        <gazebo>
+            <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+                <ros>
+                    <remapping>cmd_vel:=cmd_vel</remapping>
+                    <remapping>odom:=odom</remapping>
+                </ros>
+                <legacy_mode>false</legacy_mode>
+                <update_rate>50.0</update_rate>
+                <left_joint>middle_left_wheel_joint</left_joint>
+                <right_joint>middle_right_wheel_joint</right_joint>
+                <wheel_separation>${traction_track_width+traction_wheel_width-0.01}</wheel_separation>
+                <wheel_diameter>${2*traction_wheel_radius+0.01}</wheel_diameter>
+                <robot_base_frame>base_footprint</robot_base_frame>
+                <max_wheel_torque>${traction_max_wheel_torque}</max_wheel_torque>
+                <command_topic>cmd_vel</command_topic>
+                <odometry_topic>$(arg wheel_odom_topic)</odometry_topic>
+                <odometry_frame>odom</odometry_frame>
+                <publish_odom_tf>$(arg publish_wheel_odom_tf)</publish_odom_tf>
+                <publish_wheel_tf>true</publish_wheel_tf>
+                <publish_odom>true</publish_odom>
+                <max_wheel_acceleration>5.0</max_wheel_acceleration>
+                <!-- Odometry source, 0 for ENCODER, 1 for WORLD, defaults to WORLD -->
+                <xacro:if value="${odometry_source == 'world'}">
+                    <odometry_source>1</odometry_source>
+                </xacro:if>
+                <xacro:if value="${odometry_source == 'encoder'}">
+                    <odometry_source>0</odometry_source>
+                </xacro:if>
+            </plugin>
+        </gazebo>
+
         <!--............................... IMU PLUGIN ..................................... -->
 
         <gazebo reference="imu_frame">
@@ -104,7 +137,7 @@
                     <image>
                         <width>1024</width>
                         <height>1024</height>
-                        <format>BGR8</format>
+                        <format>R8G8B8</format>
                     </image>
                     <clip>
                         <near>0.3</near>
@@ -131,7 +164,7 @@
                     <image>
                         <width>1024</width>
                         <height>1024</height>
-                        <format>BGR8</format>
+                        <format>R8G8B8</format>
                     </image>
                     <clip>
                         <near>0.3</near>

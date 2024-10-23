@@ -46,7 +46,7 @@ def generate_launch_description():
     )
     spawn_no_arm_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            join(agv_sim_path, "launch", "sim_gazebo_spawn.launch.py")
+            join(agv_sim_path, "launch", "sim_agv_spawn.launch.py")
         ),
         condition=UnlessCondition(arm_enabled),
     )
