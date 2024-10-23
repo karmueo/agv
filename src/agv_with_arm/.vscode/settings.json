@@ -1,0 +1,28 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/xvshuo/work/scl/agv/install/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/work/scl/agv/build/bcr_bot_patrol",
+        "/home/xvshuo/work/scl/agv/install/lib/python3.10/site-packages",
+        "/home/xvshuo/moveit2_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/moveit2_ws/install/moveit_configs_utils/lib/python3.10/site-packages",
+        "/home/xvshuo/moveit2_ws/install/srdfdom/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/moveit2_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/moveit2_ws/install/launch_param_builder/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/work/scl/SuperGluePretrainedNetwork"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/xvshuo/work/scl/agv/install/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/work/scl/agv/build/bcr_bot_patrol",
+        "/home/xvshuo/work/scl/agv/install/lib/python3.10/site-packages",
+        "/home/xvshuo/moveit2_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/moveit2_ws/install/moveit_configs_utils/lib/python3.10/site-packages",
+        "/home/xvshuo/moveit2_ws/install/srdfdom/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/moveit2_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/moveit2_ws/install/launch_param_builder/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages",
+        "/home/xvshuo/work/scl/SuperGluePretrainedNetwork"
+    ]
+}

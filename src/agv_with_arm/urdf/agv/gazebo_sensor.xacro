@@ -104,7 +104,7 @@
                     <image>
                         <width>1024</width>
                         <height>1024</height>
-                        <format>R8G8B8</format>
+                        <format>BGR8</format>
                     </image>
                     <clip>
                         <near>0.3</near>
@@ -131,7 +131,7 @@
                     <image>
                         <width>1024</width>
                         <height>1024</height>
-                        <format>R8G8B8</format>
+                        <format>BGR8</format>
                     </image>
                     <clip>
                         <near>0.3</near>

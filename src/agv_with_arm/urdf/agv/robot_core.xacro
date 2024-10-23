@@ -3,12 +3,12 @@
 
     <!--................................ XACRO CONSTANTS .............................. -->
 
-    <xacro:property name="chassis_mass" value="5"/>
+    <xacro:property name="chassis_mass" value="1"/>
     <xacro:property name="chassis_length" value="0.9"/>
     <xacro:property name="chassis_width" value="0.64"/>
     <xacro:property name="chassis_height" value="0.19"/>
 
-    <xacro:property name="traction_wheel_mass" value="1"/>
+    <xacro:property name="traction_wheel_mass" value="0.5"/>
     <xacro:property name="traction_wheel_base" value="0.88"/>
     <xacro:property name="traction_max_wheel_torque" value="20000"/>
     <xacro:property name="traction_wheel_friction" value="5.0"/>
