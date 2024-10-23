@@ -21,8 +21,7 @@ def generate_launch_description():
     agv_sim_path = get_package_share_directory("agv_with_arm")
 
     # Retrieve launch configuration arguments
-    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
-    arm_enabled = LaunchConfiguration("arm_enabled", default="true")
+    arm_enabled = LaunchConfiguration("arm_enabled")
 
     world_file = LaunchConfiguration(
         "world_file",
@@ -65,8 +64,7 @@ def generate_launch_description():
             DeclareLaunchArgument("world", default_value=world_file),
             DeclareLaunchArgument("gui", default_value="true"),
             DeclareLaunchArgument("verbose", default_value="false"),
-            DeclareLaunchArgument("use_sim_time", default_value=use_sim_time),
-            DeclareLaunchArgument("arm_enabled", default_value="false"),
+            DeclareLaunchArgument("arm_enabled", default_value="true"),
             gazebo,
             spawn_with_arm_node,
             spawn_no_arm_node,

@@ -11,6 +11,9 @@ controller_manager:
 
     aubo_controller:
       type: joint_trajectory_controller/JointTrajectoryController
+    
+    hand_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
 
 
 diff_drive_controller:
@@ -89,3 +92,13 @@ aubo_controller:
       wrist1_joint: { trajectory: 0.2, goal: 0.1 }
       wrist2_joint: { trajectory: 0.2, goal: 0.1 }
       wrist3_joint: { trajectory: 0.2, goal: 0.1 }
+
+hand_controller:
+  ros__parameters:
+    joints:
+      - panda_finger_joint1
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity

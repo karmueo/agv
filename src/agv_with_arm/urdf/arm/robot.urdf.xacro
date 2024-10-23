@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="aubo_i5">
+    <xacro:arg name="initial_positions_file" default="$(find agv_with_arm)/config/initial_positions.yaml" />
+
+    <xacro:include filename="$(find agv_with_arm)/urdf/arm/aubo.gazebo.xacro" />
+
+    <!-- Gazebo world link: -->
+    <link name="world"/>
+    <joint name="world_joint" type="fixed">
+        <parent link="world" />
+        <child link = "arm_base_link" />
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <!-- 控制器 -->
+    <xacro:include filename="$(find agv_with_arm)/urdf/arm/aubo_i5.ros2_control.xacro" />
+    <xacro:aubo_i5_ros2_control name="GazeboSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

@@ -45,22 +45,17 @@ def generate_launch_description():
     this_package_path = get_package_share_directory("agv_with_arm")
 
     # Path to the Xacro file
-    xacro_path = join(this_package_path, "urdf", "agv", "robot.urdf.xacro")
+    xacro_path = join(this_package_path, "urdf", "arm", "robot.urdf.xacro")
 
-    robot_description = {
-        "robot_description": Command(
-            [
-                "xacro ",
-                xacro_path,
-                " arm_enabled:=true",  # 传递参数 arm_enabled
-            ]
-        )
-    }
+    doc = xacro.parse(open(xacro_path))
+    xacro.process_doc(doc)
+    robot_description_config = doc.toxml()
+    robot_description = {"robot_description": robot_description_config}
 
     # *********************** MoveIt!2 *********************** #
     # *** PLANNING CONTEXT *** #
     # Robot description, SRDF:
-    robot_description_semantic_config = load_file("agv_with_arm", "config/aubo.srdf")
+    robot_description_semantic_config = load_file("agv_with_arm", "config/aubo_i5.srdf")
     robot_description_semantic = {
         "robot_description_semantic": robot_description_semantic_config
     }
@@ -124,7 +119,7 @@ def generate_launch_description():
     )
     # RVIZ:
     rviz_base = join(get_package_share_directory("agv_with_arm"), "config")
-    rviz_full_config = join(rviz_base, "agv_with_arm.rviz")
+    rviz_full_config = join(rviz_base, "moveit.rviz")
     rviz_node_full = Node(
         package="rviz2",
         executable="rviz2",

@@ -2,9 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
     <xacro:arg name="arm_enabled" default="true"/>
     <xacro:arg name="robot_namespace" default="agv_with_arm"/>
+    <xacro:arg name="initial_positions_file" default="$(find agv_with_arm)/config/initial_positions.yaml" />
 
     <!-- robot description -->
-    <xacro:include filename="robot_core.xacro" />
+    <xacro:include filename="$(find agv_with_arm)/urdf/agv/robot_core.xacro" />
 
     <!-- 机械臂 -->
     <xacro:if value="$(arg arm_enabled)">
@@ -17,8 +18,8 @@
         </joint>
 
         <!-- 控制器 -->
-        <xacro:include filename="$(find agv_with_arm)/urdf/arm/ros2_control.xacro" />
-        <xacro:arm_ros2_control />
+        <xacro:include filename="$(find agv_with_arm)/urdf/arm/aubo_i5.ros2_control.xacro" />
+        <xacro:aubo_i5_ros2_control name="GazeboSystem" initial_positions_file="$(arg initial_positions_file)"/>
 
     </xacro:if>
 

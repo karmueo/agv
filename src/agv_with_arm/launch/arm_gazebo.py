@@ -1,50 +1,38 @@
 #!/usr/bin/env python3
 
 from os.path import join
-import xacro
-
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    RegisterEventHandler,
+)
 from launch.substitutions import LaunchConfiguration, Command
-import yaml
-from launch_ros.actions import Node
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import SetEnvironmentVariable
+from launch.actions import AppendEnvironmentVariable
 from launch.event_handlers import OnProcessExit
-
-
-# LOAD FILE:
-def load_file(package_name, file_path):
-    package_path = get_package_share_directory(package_name)
-    absolute_file_path = join(package_path, file_path)
-    try:
-        with open(absolute_file_path, "r") as file:
-            return file.read()
-    except EnvironmentError:
-        # parent of IOError, OSError *and* WindowsError where available.
-        return None
-
-
-# LOAD YAML:
-def load_yaml(package_name, file_path):
-    package_path = get_package_share_directory(package_name)
-    absolute_file_path = join(package_path, file_path)
-    try:
-        with open(absolute_file_path, "r") as file:
-            return yaml.safe_load(file)
-    except EnvironmentError:
-        # parent of IOError, OSError *and* WindowsError where available.
-        return None
-
-
-def get_xacro_to_doc(xacro_file_path, mappings):
-    doc = xacro.parse(open(xacro_file_path))
-    xacro.process_doc(doc, mappings=mappings)
-    return doc
+from launch_ros.actions import Node
+import xacro
 
 
 def generate_launch_description():
-    # Get package's share directory path
+    # Get agv_with_arm package's share directory path
     this_package_path = get_package_share_directory("agv_with_arm")
+
+    world_file = LaunchConfiguration(
+        "world_file",
+        default=join(
+            get_package_share_directory("agv_with_arm"), "worlds", "small_warehouse.sdf"
+        ),
+    )
+
+    # Include the Gazebo launch file
+    gazebo_share = get_package_share_directory("gazebo_ros")
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(join(gazebo_share, "launch", "gazebo.launch.py"))
+    )
 
     # Retrieve launch configuration arguments
     position_x = LaunchConfiguration("position_x")
@@ -52,14 +40,10 @@ def generate_launch_description():
     orientation_yaw = LaunchConfiguration("orientation_yaw")
 
     # Path to the Xacro file
-    xacro_path = join(this_package_path, "urdf", "agv", "robot.urdf.xacro")
+    xacro_path = join(this_package_path, "urdf", "arm", "robot.urdf.xacro")
+
     doc = xacro.parse(open(xacro_path))
-    xacro.process_doc(
-        doc,
-        mappings={
-            "arm_enabled": "true",
-        },
-    )
+    xacro.process_doc(doc)
     robot_description_config = doc.toxml()
     robot_description = {"robot_description": robot_description_config}
 
@@ -81,7 +65,7 @@ def generate_launch_description():
             "-topic",
             "/robot_description",
             "-entity",
-            "agv_sim_bot",
+            "aubo_arm",
             "-z",
             "0.28",
             "-x",
@@ -95,7 +79,6 @@ def generate_launch_description():
         ],
     )
 
-    # 驱动控制器
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -123,7 +106,6 @@ def generate_launch_description():
         arguments=["handright_controller", "-c", "/controller_manager"],
     )
 
-    # ***** STATIC TRANSFORM ***** #
     # NODE -> Static TF:
     static_tf = Node(
         package="tf2_ros",
@@ -138,7 +120,7 @@ def generate_launch_description():
             "0.0",
             "0.0",
             "arm_base_link",
-            "roof_link",
+            "world",
         ],
     )
 
@@ -147,9 +129,20 @@ def generate_launch_description():
             DeclareLaunchArgument("position_x", default_value="0.0"),
             DeclareLaunchArgument("position_y", default_value="0.0"),
             DeclareLaunchArgument("orientation_yaw", default_value="0.0"),
+            # Declare launch arguments
+            AppendEnvironmentVariable(
+                name="GAZEBO_MODEL_PATH", value=join(this_package_path, "models")
+            ),
+            SetEnvironmentVariable(
+                name="GAZEBO_RESOURCE_PATH",
+                value="/usr/share/gazebo-11:"
+                + join(get_package_share_directory("agv_with_arm"), "worlds"),
+            ),
+            DeclareLaunchArgument("world", default_value=world_file),
+            gazebo,
             robot_state_publisher,
             spawn_entity,
-            static_tf,
+            # static_tf,
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=spawn_entity,
@@ -158,14 +151,6 @@ def generate_launch_description():
                     ],
                 )
             ),
-            # RegisterEventHandler(
-            #     OnProcessExit(
-            #         target_action=joint_broad_spawner,
-            #         on_exit=[
-            #             diff_drive_spawner,
-            #         ],
-            #     )
-            # ),
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=joint_broad_spawner,

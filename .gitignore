@@ -54,5 +54,5 @@ install/
 log
 
 aubo_description
-moveit_assistant
-agv_arm_moveit2
+moveit2_config
+agv_arm_moviet2
