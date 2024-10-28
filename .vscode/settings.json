@@ -94,6 +94,9 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "*.txx": "cpp"
+        "*.txx": "cpp",
+        "coroutine": "cpp",
+        "source_location": "cpp",
+        "valarray": "cpp"
     }
 }
